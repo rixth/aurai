@@ -40,6 +40,10 @@ void SerialIO_putbin(uint8_t byte) {
   }
 }
 
+bool SerialIO_hasData() {
+  return bit_is_set(UCSR0A, RXC0);
+}
+
 uint8_t SerialIO_recv() {
   loop_until_bit_is_set(UCSR0A, RXC0);
   return UDR0;
