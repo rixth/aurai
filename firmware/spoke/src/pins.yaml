@@ -1,0 +1,5 @@
+---
+eeprom_cs: 5
+red_led: 11
+yellow_led: 12
+green_led: 13
