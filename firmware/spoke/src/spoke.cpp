@@ -11,22 +11,25 @@ int main() {
   SPI_begin();
   EEPROM_init();
 
-  SerialIO_puts("\n\nSPI Test\n\n");
-  _delay_ms(10);
+  bool redOn = false;
+  bool yellowOn = false;
+  bool greenOn = false;
+
+  RED_LED_ToOutput();
+  GRN_LED_ToOutput();
+  YLW_LED_ToOutput();
 
   while (1) {
-    int addr = 0;
-    uint8_t byt = SerialIO_recv();
+    if (SerialIO_hasData()) {
+      uint8_t byt = SerialIO_recv();
+      if (byt == '1') redOn = !redOn;
+      if (byt == '2') yellowOn = !yellowOn;
+      if (byt == '3') greenOn = !greenOn;
+    }
 
-    SerialIO_puts("Writing: ");
-    SerialIO_putb(byt);
-    SerialIO_puts("\n");
-
-    EEPROM_write(addr, byt);
-
-    SerialIO_puts("Read: ");
-    SerialIO_putb(EEPROM_read(addr));
-    SerialIO_puts("\n");
+    redOn ? RED_LED_High() : RED_LED_Low();
+    yellowOn ? YLW_LED_High() : YLW_LED_Low();
+    greenOn ? GRN_LED_High() : GRN_LED_Low();
   }
 
   return 0;
