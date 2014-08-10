@@ -56,6 +56,7 @@ help:
 	@echo "make clean ..... to delete objects and hex file"
 	@echo "make pins ...... to write pins.h"
 	@echo "make analyze ... open Logic.app"
+	@echo "make serial .... open SerialTools.app"
 
 program: flash fuse
 
@@ -102,5 +103,8 @@ pins:
 
 analyze:
 	open /Applications/Logic.app
+
+serial:
+	open /Applications/SerialTools.app
 
 .PHONY: clean
