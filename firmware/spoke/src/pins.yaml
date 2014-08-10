@@ -4,3 +4,4 @@ red_led: 11
 ylw_led: 12
 grn_led: 13
 dht11: 9
+irled: 5
