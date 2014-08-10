@@ -11,8 +11,6 @@ uint8_t DHT11_readSensor();
 uint8_t DHT11_humidity();
 int8_t DHT11_temperature();
 double DHT11_dewPoint();
-bool DHT11__waitFor(bool waitFor);
-bool DHT11__waitForHigh();
-bool DHT11__waitForLow();
+int8_t DHT11__waitFor(bool waitFor);
 
 #endif

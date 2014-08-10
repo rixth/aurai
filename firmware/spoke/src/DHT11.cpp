@@ -4,7 +4,6 @@
 
 #include "DHT11.h"
 #include "pins.h"
-#include "time.h"
 
 int8_t DHT11__temperature = 0;
 int8_t DHT11__humidity = 0;
@@ -31,24 +30,25 @@ uint8_t DHT11_readSensor() {
   DHT11_ToInput();
 
   // Input should go high then low
-  if (!DHT11__waitFor(true) || !DHT11__waitFor(false)) {
+  if (DHT11__waitFor(true) == -1 || DHT11__waitFor(false) == -1) {
     return DHT11_TIMEOUT_ERR;
   }
 
   for (int i = 0; i < bitsToClockIn; i++) {
     // Wait for high or timeout
-    if (!DHT11__waitFor(true)) {
+    if (DHT11__waitFor(true) == -1) {
       return DHT11_TIMEOUT_ERR;
     }
-
-    unsigned long t = Time_micros();
 
     // Wait for low or timeout
-    if (!DHT11__waitFor(false)) {
+
+
+    uint8_t timeToLow = DHT11__waitFor(false);
+    if (timeToLow == -1) {
       return DHT11_TIMEOUT_ERR;
     }
 
-    if ((Time_micros() - t) > 40) {
+    if (timeToLow > 35) {
       bytes[byteIdx] |= _BV(bitIdx);
     }
 
@@ -83,14 +83,15 @@ double DHT11_dewPoint() {
   return (c * tmp) / (b - tmp);
 }
 
-bool DHT11__waitFor(bool waitFor) {
-  unsigned int loopCnt = 10000;
+int8_t DHT11__waitFor(bool waitFor) {
+  uint8_t loopCnt = 255;
 
   while(DHT11_Read() != (uint8_t) waitFor) {
     if (loopCnt-- == 0) {
-      return false;
+      return -1;
     }
+    _delay_us(2);
   }
 
-  return true;
+  return (255 - loopCnt) * 2;
 }

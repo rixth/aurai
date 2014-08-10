@@ -5,11 +5,9 @@
 #include <SPI.h>
 #include <SerialIO.h>
 #include <EEPROM.h>
-#include <time.h>
 #include <DHT11.h>
 
 int main() {
-  Time_init();
   SerialIO_Init();
   SPI_begin();
   EEPROM_init();
