@@ -1,7 +1,7 @@
 ---
 eeprom_cs: 4
-red_led: 11
-ylw_led: 12
-grn_led: 13
+red_led: 24
+ylw_led: 25
+grn_led: 28
 dht11: 9
 irled: 5
