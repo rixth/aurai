@@ -38,6 +38,7 @@ CORE_LIB_CXX_SRC = \
 	../shared/SerialIO.cpp \
 	../shared/SPI.cpp \
 	../shared/EEPROM.cpp \
+	../shared/time.cpp \
 
 OBJECTS := $(CORE_LIB_SRC:.c=.o)
 OBJECTS += $(CORE_LIB_CXX_SRC:.cpp=.o)

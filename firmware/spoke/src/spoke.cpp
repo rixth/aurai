@@ -5,8 +5,11 @@
 #include <SPI.h>
 #include <SerialIO.h>
 #include <EEPROM.h>
+#include <time.h>
+#include <DHT11.h>
 
 int main() {
+  Time_init();
   SerialIO_Init();
   SPI_begin();
   EEPROM_init();
@@ -26,6 +29,17 @@ int main() {
       if (byt == '2') yellowOn = !yellowOn;
       if (byt == '3') greenOn = !greenOn;
     }
+
+    uint8_t r = DHT11_readSensor();
+    SerialIO_puts("Read result: ");
+    SerialIO_putb(r);
+    SerialIO_puts(" T: ");
+    SerialIO_putb(DHT11_temperature());
+    SerialIO_puts("C H: ");
+    SerialIO_putb(DHT11_humidity());
+    SerialIO_puts("%\n");
+
+    _delay_ms(500);
 
     redOn ? RED_LED_High() : RED_LED_Low();
     yellowOn ? YLW_LED_High() : YLW_LED_Low();
