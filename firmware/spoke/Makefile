@@ -13,11 +13,12 @@ AVRDUDE          = $(AVR_TOOLS_PATH)/avrdude -c usbasp -P usb -p $(AVRDUDE_MCU)
 
 SRCDIR   = src
 BUILDDIR = build
+SHAREDDIR = ../shared
 
 DEFS     = -mmcu=$(BUILD_MCU) -DF_CPU=$(F_CPU)
 INCS     = -I. \
            -Isrc \
-           -I../shared/ \
+           -I$(SHAREDDIR) \
 
 OPTS      = -Os -funsigned-char -funsigned-bitfields -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -ffreestanding
 CWARN     = -Wstrict-prototypes -Wall
@@ -35,10 +36,9 @@ CXX_SOURCES = $(shell find $(SRCDIR) -type f -name *.cpp)
 
 CORE_LIB_SRC =
 CORE_LIB_CXX_SRC = \
-	../shared/SerialIO.cpp \
-	../shared/SPI.cpp \
-	../shared/EEPROM.cpp \
-	../shared/time.cpp \
+	$(SHAREDDIR)/SerialIO.cpp \
+	$(SHAREDDIR)/SPI.cpp \
+	$(SHAREDDIR)/EEPROM.cpp \
 
 OBJECTS := $(CORE_LIB_SRC:.c=.o)
 OBJECTS += $(CORE_LIB_CXX_SRC:.cpp=.o)
@@ -96,7 +96,7 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp
 
 clean:
 	@echo " Cleaning...";
-	$(RM) -r $(BUILDDIR) $(BINDIR) $(TARGET) $(ARDUINO_CORE)/*.o
+	$(RM) -r $(BUILDDIR) $(BINDIR) $(TARGET) $(SHAREDDIR)/*.o
 
 pins:
 	pin-defines --device=$(BUILD_MCU)
