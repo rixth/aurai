@@ -1,5 +1,5 @@
 ---
-eeprom_cs: 5
+eeprom_cs: 4
 red_led: 11
 ylw_led: 12
 grn_led: 13

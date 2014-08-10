@@ -3,6 +3,7 @@
 #include <avr/delay.h>
 #include <SPI.h>
 #include <EEPROM.h>
+#include <pins.h>
 
 #ifndef EEPROM_CS_High
 #define EEPROM_CS_High() EEPROM_CS_PORT |= EEPROM_CS_MASK;
