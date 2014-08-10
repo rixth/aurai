@@ -21,7 +21,7 @@ int main() {
   YLW_LED_ToOutput();
 
   while (1) {
-    if (SerialIO_hasData()) {
+    while (SerialIO_hasData()) {
       uint8_t byt = SerialIO_recv();
       if (byt == '1') redOn = !redOn;
       if (byt == '2') yellowOn = !yellowOn;
