@@ -27,8 +27,12 @@ void SerialIO_puts(const char str[]) {
 }
 
 void SerialIO_putb(uint8_t byte) {
-  SerialIO_put('0' + (byte / 100));
-  SerialIO_put('0' + ((byte / 10) % 10));
+  if (byte >= 100) {
+    SerialIO_put('0' + (byte / 100));
+  }
+  if (byte >= 10) {
+    SerialIO_put('0' + ((byte / 10) % 10));
+  }
   SerialIO_put('0' + (byte % 10));
 }
 
