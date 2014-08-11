@@ -3388,6 +3388,32 @@ This is the mechanical footprint for a #4 phillips button head screw. Use the ke
 <wire x1="9" y1="-3.5" x2="-4" y2="-3.5" width="0.2032" layer="51"/>
 <wire x1="-4" y1="-3.5" x2="-4" y2="2" width="0.2032" layer="51"/>
 </package>
+<package name="SOT223">
+<description>&lt;b&gt;SMALL OUTLINE TRANSISTOR&lt;/b&gt;</description>
+<wire x1="3.277" y1="1.778" x2="3.277" y2="-1.778" width="0.2032" layer="21"/>
+<wire x1="3.277" y1="-1.778" x2="-3.277" y2="-1.778" width="0.2032" layer="21"/>
+<wire x1="-3.277" y1="-1.778" x2="-3.277" y2="1.778" width="0.2032" layer="21"/>
+<wire x1="-3.277" y1="1.778" x2="3.277" y2="1.778" width="0.2032" layer="21"/>
+<wire x1="-3.473" y1="4.483" x2="3.473" y2="4.483" width="0.0508" layer="39"/>
+<wire x1="3.473" y1="-4.483" x2="-3.473" y2="-4.483" width="0.0508" layer="39"/>
+<wire x1="-3.473" y1="-4.483" x2="-3.473" y2="4.483" width="0.0508" layer="39"/>
+<wire x1="3.473" y1="4.483" x2="3.473" y2="-4.483" width="0.0508" layer="39"/>
+<smd name="1" x="-2.311" y="-3.099" dx="1.219" dy="2.235" layer="1"/>
+<smd name="2" x="0" y="-3.099" dx="1.219" dy="2.235" layer="1"/>
+<smd name="3" x="2.311" y="-3.099" dx="1.219" dy="2.235" layer="1"/>
+<smd name="4" x="0" y="3.099" dx="3.6" dy="2.2" layer="1"/>
+<text x="-2.54" y="0.0508" size="1.27" layer="25">&gt;NAME</text>
+<text x="-2.54" y="-1.3208" size="1.27" layer="27">&gt;VALUE</text>
+<rectangle x1="-1.6002" y1="1.8034" x2="1.6002" y2="3.6576" layer="51"/>
+<rectangle x1="-0.4318" y1="-3.6576" x2="0.4318" y2="-1.8034" layer="51"/>
+<rectangle x1="-2.7432" y1="-3.6576" x2="-1.8796" y2="-1.8034" layer="51"/>
+<rectangle x1="1.8796" y1="-3.6576" x2="2.7432" y2="-1.8034" layer="51"/>
+<rectangle x1="-1.6002" y1="1.8034" x2="1.6002" y2="3.6576" layer="51"/>
+<rectangle x1="-0.4318" y1="-3.6576" x2="0.4318" y2="-1.8034" layer="51"/>
+<rectangle x1="-2.7432" y1="-3.6576" x2="-1.8796" y2="-1.8034" layer="51"/>
+<rectangle x1="1.8796" y1="-3.6576" x2="2.7432" y2="-1.8034" layer="51"/>
+<rectangle x1="-1" y1="-1" x2="1" y2="1" layer="35"/>
+</package>
 </packages>
 <symbols>
 <symbol name="NRF24L01_BREAKOUT">
@@ -3416,6 +3442,18 @@ This is the mechanical footprint for a #4 phillips button head screw. Use the ke
 <pin name="SIG" x="-7.62" y="0" length="short"/>
 <pin name="VCC" x="7.62" y="2.54" length="short" direction="pwr" rot="R180"/>
 <pin name="GND" x="7.62" y="-2.54" length="short" direction="pwr" rot="R180"/>
+</symbol>
+<symbol name="LM3904">
+<wire x1="-7.62" y1="-5.08" x2="7.62" y2="-5.08" width="0.4064" layer="94"/>
+<wire x1="7.62" y1="-5.08" x2="7.62" y2="2.54" width="0.4064" layer="94"/>
+<wire x1="7.62" y1="2.54" x2="-7.62" y2="2.54" width="0.4064" layer="94"/>
+<wire x1="-7.62" y1="2.54" x2="-7.62" y2="-5.08" width="0.4064" layer="94"/>
+<text x="-7.62" y="5.715" size="1.778" layer="95">&gt;NAME</text>
+<text x="-7.62" y="3.175" size="1.778" layer="96">&gt;VALUE</text>
+<text x="-2.032" y="-4.318" size="1.524" layer="95">GND</text>
+<pin name="VI" x="-10.16" y="0" length="short" direction="in"/>
+<pin name="GND" x="0" y="-7.62" visible="pad" length="short" direction="pwr" rot="R90"/>
+<pin name="VO" x="10.16" y="0" length="short" direction="pas" rot="R180"/>
 </symbol>
 </symbols>
 <devicesets>
@@ -3451,6 +3489,24 @@ This is the mechanical footprint for a #4 phillips button head screw. Use the ke
 <connect gate="G$1" pin="GND" pad="3"/>
 <connect gate="G$1" pin="SIG" pad="2"/>
 <connect gate="G$1" pin="VCC" pad="1"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="LM3940" prefix="IC">
+<description>LM3904 5v to 3.3v LDO</description>
+<gates>
+<gate name="IC" symbol="LM3904" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="SOT223">
+<connects>
+<connect gate="IC" pin="GND" pad="2 4"/>
+<connect gate="IC" pin="VI" pad="1"/>
+<connect gate="IC" pin="VO" pad="3"/>
 </connects>
 <technologies>
 <technology name=""/>
@@ -5238,14 +5294,15 @@ Basic schematic elements and footprints for 0603, 1206, and PTH resistors.</desc
 <part name="SUPPLY6" library="SparkFun-Aesthetics" deviceset="5V" device=""/>
 <part name="SUPPLY2" library="SparkFun-Aesthetics" deviceset="5V" device=""/>
 <part name="IC1" library="linear" deviceset="78*" device="TV" technology="05"/>
-<part name="500" library="SparkFun-Resistors" deviceset="RESISTOR" device="0805-RES" value="50"/>
-<part name="1000" library="SparkFun-Resistors" deviceset="RESISTOR" device="0805-RES" value="100"/>
-<part name="GND12" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
 <part name="SUPPLY7" library="SparkFun-Aesthetics" deviceset="5V" device=""/>
 <part name="SUPPLY8" library="SparkFun-Aesthetics" deviceset="3.3V" device=""/>
 <part name="R6" library="SparkFun-Resistors" deviceset="RESISTOR" device="0805-RES" value="330"/>
 <part name="R7" library="SparkFun-Resistors" deviceset="RESISTOR" device="0805-RES" value="5k"/>
 <part name="SUPPLY9" library="SparkFun-Aesthetics" deviceset="5V" device=""/>
+<part name="GND6" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
+<part name="C4" library="SparkFun-Capacitors" deviceset="CAP" device="PTH" value="0.47uF"/>
+<part name="C5" library="SparkFun-Capacitors" deviceset="CAP" device="PTH" value="33uF"/>
+<part name="IC3" library="aurai" deviceset="LM3940" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -5255,11 +5312,11 @@ Basic schematic elements and footprints for 0603, 1206, and PTH resistors.</desc
 <wire x1="68.58" y1="132.08" x2="0" y2="132.08" width="0.2032" layer="97"/>
 <wire x1="68.58" y1="132.08" x2="68.58" y2="99.06" width="0.2032" layer="97"/>
 <text x="2.794" y="127.254" size="2.54" layer="97">Programming connection</text>
-<wire x1="68.58" y1="99.06" x2="68.58" y2="63.5" width="0.2032" layer="97"/>
-<wire x1="68.58" y1="63.5" x2="68.58" y2="0" width="0.2032" layer="97"/>
+<wire x1="68.58" y1="99.06" x2="68.58" y2="45.72" width="0.2032" layer="97"/>
+<wire x1="68.58" y1="45.72" x2="68.58" y2="0" width="0.2032" layer="97"/>
 <wire x1="68.58" y1="99.06" x2="0" y2="99.06" width="0.2032" layer="97"/>
-<wire x1="68.58" y1="63.5" x2="0" y2="63.5" width="0.2032" layer="97"/>
-<text x="2.794" y="94.234" size="2.54" layer="97">3.3v voltage divider</text>
+<wire x1="68.58" y1="45.72" x2="0" y2="45.72" width="0.2032" layer="97"/>
+<text x="2.794" y="94.234" size="2.54" layer="97">3.3v power supply</text>
 </plain>
 <instances>
 <instance part="FRAME1" gate="G$1" x="0" y="0"/>
@@ -5299,14 +5356,15 @@ Basic schematic elements and footprints for 0603, 1206, and PTH resistors.</desc
 <instance part="SUPPLY6" gate="G$1" x="20.32" y="109.22" rot="R180"/>
 <instance part="SUPPLY2" gate="G$1" x="60.96" y="165.1" rot="R270"/>
 <instance part="IC1" gate="A1" x="45.72" y="165.1"/>
-<instance part="500" gate="G$1" x="20.32" y="78.74"/>
-<instance part="1000" gate="G$1" x="45.72" y="78.74"/>
-<instance part="GND12" gate="1" x="55.88" y="71.12"/>
-<instance part="SUPPLY7" gate="G$1" x="10.16" y="83.82"/>
-<instance part="SUPPLY8" gate="G$1" x="33.02" y="83.82"/>
+<instance part="SUPPLY7" gate="G$1" x="20.32" y="81.28" rot="R90"/>
+<instance part="SUPPLY8" gate="G$1" x="50.8" y="81.28" rot="R270"/>
 <instance part="R6" gate="G$1" x="195.58" y="83.82" rot="R180"/>
 <instance part="R7" gate="G$1" x="114.3" y="160.02" rot="R90"/>
 <instance part="SUPPLY9" gate="G$1" x="114.3" y="167.64"/>
+<instance part="GND6" gate="1" x="35.56" y="53.34"/>
+<instance part="C4" gate="G$1" x="27.94" y="60.96"/>
+<instance part="C5" gate="G$1" x="43.18" y="60.96"/>
+<instance part="IC3" gate="IC" x="35.56" y="81.28"/>
 </instances>
 <busses>
 </busses>
@@ -5385,10 +5443,17 @@ Basic schematic elements and footprints for 0603, 1206, and PTH resistors.</desc
 <wire x1="33.02" y1="154.94" x2="33.02" y2="139.7" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="1000" gate="G$1" pin="2"/>
-<wire x1="50.8" y1="78.74" x2="55.88" y2="78.74" width="0.1524" layer="91"/>
-<wire x1="55.88" y1="78.74" x2="55.88" y2="73.66" width="0.1524" layer="91"/>
-<pinref part="GND12" gate="1" pin="GND"/>
+<pinref part="GND6" gate="1" pin="GND"/>
+<wire x1="35.56" y1="73.66" x2="35.56" y2="55.88" width="0.1524" layer="91"/>
+<wire x1="43.18" y1="55.88" x2="35.56" y2="55.88" width="0.1524" layer="91"/>
+<junction x="35.56" y="55.88"/>
+<wire x1="35.56" y1="55.88" x2="27.94" y2="55.88" width="0.1524" layer="91"/>
+<wire x1="27.94" y1="55.88" x2="27.94" y2="58.42" width="0.1524" layer="91"/>
+<wire x1="43.18" y1="58.42" x2="43.18" y2="55.88" width="0.1524" layer="91"/>
+<pinref part="C4" gate="G$1" pin="2"/>
+<pinref part="C5" gate="G$1" pin="2"/>
+<pinref part="IC3" gate="IC" pin="GND"/>
+<junction x="35.56" y="73.66"/>
 </segment>
 </net>
 <net name="SCK" class="0">
@@ -5554,32 +5619,41 @@ Basic schematic elements and footprints for 0603, 1206, and PTH resistors.</desc
 <junction x="55.88" y="165.1"/>
 </segment>
 <segment>
-<pinref part="500" gate="G$1" pin="1"/>
-<wire x1="15.24" y1="78.74" x2="10.16" y2="78.74" width="0.1524" layer="91"/>
-<wire x1="10.16" y1="78.74" x2="10.16" y2="83.82" width="0.1524" layer="91"/>
-<pinref part="SUPPLY7" gate="G$1" pin="5V"/>
-</segment>
-<segment>
 <pinref part="SUPPLY9" gate="G$1" pin="5V"/>
 <pinref part="R7" gate="G$1" pin="2"/>
 <wire x1="114.3" y1="167.64" x2="114.3" y2="165.1" width="0.1524" layer="91"/>
 </segment>
+<segment>
+<wire x1="27.94" y1="81.28" x2="25.4" y2="81.28" width="0.1524" layer="91"/>
+<pinref part="C4" gate="G$1" pin="1"/>
+<wire x1="27.94" y1="66.04" x2="27.94" y2="68.58" width="0.1524" layer="91"/>
+<wire x1="27.94" y1="68.58" x2="25.4" y2="68.58" width="0.1524" layer="91"/>
+<wire x1="25.4" y1="68.58" x2="25.4" y2="81.28" width="0.1524" layer="91"/>
+<junction x="25.4" y="81.28"/>
+<pinref part="IC3" gate="IC" pin="VI"/>
+<junction x="25.4" y="81.28"/>
+<wire x1="20.32" y1="81.28" x2="25.4" y2="81.28" width="0.1524" layer="91"/>
+<pinref part="SUPPLY7" gate="G$1" pin="5V"/>
+</segment>
 </net>
 <net name="3.3V" class="0">
-<segment>
-<pinref part="500" gate="G$1" pin="2"/>
-<pinref part="1000" gate="G$1" pin="1"/>
-<wire x1="25.4" y1="78.74" x2="33.02" y2="78.74" width="0.1524" layer="91"/>
-<wire x1="33.02" y1="78.74" x2="40.64" y2="78.74" width="0.1524" layer="91"/>
-<wire x1="33.02" y1="78.74" x2="33.02" y2="83.82" width="0.1524" layer="91"/>
-<junction x="33.02" y="78.74"/>
-<pinref part="SUPPLY8" gate="G$1" pin="3.3V"/>
-</segment>
 <segment>
 <pinref part="U3" gate="U1" pin="VCC"/>
 <wire x1="233.68" y1="60.96" x2="238.76" y2="60.96" width="0.1524" layer="91"/>
 <pinref part="SUPPLY5" gate="G$1" pin="3.3V"/>
 <wire x1="238.76" y1="60.96" x2="238.76" y2="63.5" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<wire x1="43.18" y1="81.28" x2="45.72" y2="81.28" width="0.1524" layer="91"/>
+<wire x1="45.72" y1="81.28" x2="45.72" y2="68.58" width="0.1524" layer="91"/>
+<wire x1="45.72" y1="68.58" x2="43.18" y2="68.58" width="0.1524" layer="91"/>
+<pinref part="C5" gate="G$1" pin="1"/>
+<wire x1="43.18" y1="68.58" x2="43.18" y2="66.04" width="0.1524" layer="91"/>
+<wire x1="45.72" y1="81.28" x2="50.8" y2="81.28" width="0.1524" layer="91"/>
+<junction x="45.72" y="81.28"/>
+<pinref part="IC3" gate="IC" pin="VO"/>
+<junction x="45.72" y="81.28"/>
+<pinref part="SUPPLY8" gate="G$1" pin="3.3V"/>
 </segment>
 </net>
 <net name="N$15" class="0">
@@ -5652,13 +5726,8 @@ Basic schematic elements and footprints for 0603, 1206, and PTH resistors.</desc
 </sheet>
 </sheets>
 <errors>
-<approved hash="104,1,246.38,68.58,U3,VCC,3.3V,,,"/>
-<approved hash="104,1,83.82,104.14,U$1,VCC,5V,,,"/>
-<approved hash="104,1,254,111.76,U2,VCC,5V,,,"/>
-<approved hash="202,1,254,101.6,U2,WP,,,,"/>
-<approved hash="202,1,254,96.52,U2,HOLD,,,,"/>
-<approved hash="206,1,223.52,106.68,MISO,,,,,"/>
-<approved hash="206,1,226.06,66.04,MISO,,,,,"/>
+<approved hash="104,1,233.68,60.96,U3,VCC,3.3V,,,"/>
+<approved hash="104,1,91.44,149.86,U$1,VCC,5V,,,"/>
 </errors>
 </schematic>
 </drawing>
