@@ -160,13 +160,14 @@
 <text x="33.528" y="27.686" size="1.016" layer="21" ratio="15">NRF24L01+</text>
 <text x="21.844" y="34.036" size="1.016" layer="21" ratio="15">ICSP</text>
 <text x="4.953" y="13.462" size="1.016" layer="21" ratio="15" rot="R90">IR_LED</text>
-<text x="6.858" y="41.529" size="1.524" layer="21" ratio="15">aurai - spoke rev 1</text>
+<text x="6.858" y="41.529" size="1.524" layer="21" ratio="15">aurai - spoke rev </text>
 <text x="37.329" y="3.176" size="1.524" layer="21" ratio="15" rot="R45">trix.io</text>
 <text x="33.721" y="2.509" size="1.397" layer="21" ratio="15" rot="R45">thomas rix</text>
 <text x="20.701" y="19.939" size="1.016" layer="21" ratio="15">ATMEGA328P</text>
 <text x="34.417" y="6.4987875" size="0.508" layer="21" ratio="15" rot="R135">0.1uf</text>
 <text x="37.719" y="9.8007875" size="0.508" layer="21" ratio="15" rot="R135">0.1uf</text>
 <text x="3.048" y="25.273" size="0.508" layer="21" ratio="15">330</text>
+<text x="30.988" y="41.529" size="1.524" layer="21" ratio="15">&gt;REVISION</text>
 </plain>
 <libraries>
 <library name="SparkFun-DigitalIC">
@@ -581,6 +582,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 </library>
 </libraries>
 <attributes>
+<attribute name="REVISION" value="2"/>
 </attributes>
 <variantdefs>
 </variantdefs>

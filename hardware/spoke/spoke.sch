@@ -5331,7 +5331,7 @@ Basic schematic elements and footprints for 0603, 1206, and PTH resistors.</desc
 </libraries>
 <attributes>
 <attribute name="CNAME" value="Aurai"/>
-<attribute name="CREVISION" value="0.1"/>
+<attribute name="CREVISION" value="2"/>
 <attribute name="DESIGNER" value="Thomas Rix"/>
 </attributes>
 <variantdefs>
