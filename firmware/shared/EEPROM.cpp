@@ -1,9 +1,9 @@
 #include <stdint.h>
 #include <avr/sfr_defs.h>
-#include <avr/delay.h>
+#include <util/delay.h>
 #include <SPI.h>
-#include <EEPROM.h>
 #include <pins.h>
+#include <EEPROM.h>
 
 #ifndef EEPROM_CS_High
 #define EEPROM_CS_High() EEPROM_CS_PORT |= EEPROM_CS_MASK;
