@@ -39,6 +39,7 @@ CORE_LIB_CXX_SRC = \
 	$(SHAREDDIR)/SerialIO.cpp \
 	$(SHAREDDIR)/SPI.cpp \
 	$(SHAREDDIR)/EEPROM.cpp \
+	$(SHAREDDIR)/NRF24L01.cpp \
 
 OBJECTS := $(CORE_LIB_SRC:.c=.o)
 OBJECTS += $(CORE_LIB_CXX_SRC:.cpp=.o)
