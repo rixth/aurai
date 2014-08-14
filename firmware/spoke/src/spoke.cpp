@@ -23,6 +23,8 @@ int main() {
   RED_LED_ToOutput();
   GRN_LED_ToOutput();
   YLW_LED_ToOutput();
+  TRG_ToOutput();
+  TRG_Low();
 
   while (1) {
     // mainTest(SerialIO_recv());
@@ -37,70 +39,100 @@ void testRadio(uint8_t input) {
 
   if (input == 'r') {
     mode = 'r';
+    SerialIO_puts("\n -- RADIO RECEIVER TEST -- \n");
   } else if (input == 't') {
     mode = 't';
+    SerialIO_puts("\n -- RADIO TRANSMITTER TEST -- \n");
+  } else if (input == 'c' || input == 'v' || input == 'b') {
+    mode = 'c';
+    SerialIO_puts("\n -- RADIO CONFIG TEST -- \n");
   } else {
     SerialIO_puts("\n -- Skipping Radio Test -- \n");
     return;
   }
 
-  if (mode == 'r') {
-    SerialIO_puts("\n -- RADIO RECEIVER TEST -- \n");
-  } else {
-    SerialIO_puts("\n -- RADIO TRANSMITTER TEST -- \n");
-  }
-
   SPI_setBitOrder(SPI_MSBFIRST);
+
+  // Configure: CRC scheme (field cleared, 1-bit)
+  // Clear interrupt flags
+  // Power up
+  // Wait for standby mode
+  SerialIO_puts("Powering up...\n");
+  NRF24_setRegister(NRF24_REG_CONFIG, NRF24_PWR_UP | NRF24_INTERRUPTS);
+  _delay_us(NRF24_TIME_PD_TO_SB1);
 
   SerialIO_puts("Configuring...\n");
 
   // Configure: Frequency channel
-  NRF24_setRegister(NRF24_REG_RF_CH, 1);
+  NRF24_setRegister(NRF24_REG_RF_CH, 10);
 
   // Configure: RX address width
   NRF24_setRegister(NRF24_REG_SETUP_AW, NRF24_AW_5BITS);
 
+  // Disable RX1
+  // NRF24_setRegisterAnd(NRF24_REG_EN_RXADDR, ~(NRF24_ERX_P1));
+
   // Configure: Air data rate
   // Configure: LNA gain
-  NRF24_setRegister(NRF24_REG_RF_SETUP, NRF24_RF_DR_2MBPS | NRF24_RF_PWR_0DBM);
+  NRF24_setRegister(NRF24_REG_RF_SETUP, NRF24_RF_DR_2MBPS | NRF24_RF_PWR_12DBM);
 
-  uint8_t rxAddr[5] = { 0xC2, 0xC2, 0xC2, 0xC2, 0xC2 };
-  uint8_t txAddr[5] = { 0xE7, 0xE7, 0xE7, 0xE7, 0xE7 };
+  // uint8_t rxAddr[5] = { 0x05, 0x04, 0x03, 0x02, 0x01 };
+  // uint8_t txAddr[5] = { 0x06, 0x05, 0x04, 0x03, 0x02 };
 
+  // uint8_t rxAddr[5] = { 'c', 'l', 'i', 'e', '1' };
+  // uint8_t txAddr[5] = { 's', 'e', 'r', 'v', '1' };
+
+  // uint8_t *rxAddr = (uint8_t *)"serv1";
+  // uint8_t *txAddr = (uint8_t *)"clie1";
+
+  TRG_High();
   // Configure: TX and RX addresses
-  if (mode == 'r') {
-    NRF24_setRegister(NRF24_REG_RX_ADDR_P1, txAddr, 5);
-    NRF24_setRegister(NRF24_REG_RX_ADDR_P0, rxAddr, 5);
+  if (mode == 'r' || input == 'v') {
+    NRF24_setRegister(NRF24_REG_RX_ADDR_P1, (uint8_t *)"serv1", 5);
+    NRF24_setRegister(NRF24_REG_TX_ADDR, (uint8_t *)"clie1", 5);
+    NRF24_setRegister(NRF24_REG_RX_ADDR_P0, (uint8_t *)"clie1", 5);
 
-    NRF24_setRegister(NRF24_REG_TX_ADDR, rxAddr, 5);
-  } else {
-    NRF24_setRegister(NRF24_REG_RX_ADDR_P1, rxAddr, 5);
-    NRF24_setRegister(NRF24_REG_RX_ADDR_P0, txAddr, 5);
+    // NRF24_setRegister(NRF24_REG_RX_ADDR_P5, rxAddr, 5);
 
-    NRF24_setRegister(NRF24_REG_TX_ADDR, txAddr, 5);
+    // NRF24_setRegister(NRF24_REG_RX_ADDR_P1, txAddr, 5);
+    // NRF24_setRegister(NRF24_REG_RX_ADDR_P0, rxAddr, 5);
+  } else if (mode == 't' || input == 'b') {
+    NRF24_setRegister(NRF24_REG_RX_ADDR_P1, (uint8_t *)"clie1", 5);
+    NRF24_setRegister(NRF24_REG_TX_ADDR, (uint8_t *)"serv1", 5);
+    NRF24_setRegister(NRF24_REG_RX_ADDR_P0, (uint8_t *)"serv1", 5);
+
+    // NRF24_setRegister(NRF24_REG_TX_ADDR, rxAddr, 5);
+    // NRF24_setRegister(NRF24_REG_RX_ADDR_P0, rxAddr, 5);
+
+    // NRF24_setRegister(NRF24_REG_TX_ADDR, txAddr, 5);
+    // NRF24_setRegister(NRF24_REG_RX_ADDR_P0, txAddr, 5);
+
+    // NRF24_setRegister(NRF24_REG_RX_ADDR_P0, txAddr, 5);
+    // NRF24_setRegister(NRF24_REG_TX_ADDR, txAddr, 5);
+    // NRF24_setRegister(NRF24_REG_RX_ADDR_P1, rxAddr, 5);
   }
 
-  // Configure: packet size to 4 bytes
-  NRF24_setRegister(NRF24_REG_RX_ADDR_P0, 4);
-  NRF24_setRegister(NRF24_REG_RX_ADDR_P1, 4);
+  // Configure: packet size to 1 byte
+  NRF24_setRegister(NRF24_REG_RX_PW_P0, 1);
+  NRF24_setRegister(NRF24_REG_RX_PW_P1, 1);
 
-  // Configure: CRC scheme (field cleared, 1-bit)
-  // Power up
-  // Wait for standby mode
-  SerialIO_puts("Powering up...\n");
-  NRF24_setRegister(NRF24_REG_CONFIG, NRF24_PWR_UP);
-  _delay_us(NRF24_TIME_PD_TO_SB1);
-
-  SerialIO_puts("Status: ");
-  SerialIO_putb(NRF24_write(NRF24_CMD_NOP));
-  SerialIO_puts("\n");
+  // Set lots of retries
+  NRF24_setRegister(NRF24_REG_SETUP_RETR, 0xFF);
 
   // Enable no-ACK feature
-  NRF24_setRegisterOr(NRF24_REG_FEATURE, NRF24_EN_DYN_ACK);
+  // NRF24_setRegisterOr(NRF24_REG_FEATURE, NRF24_EN_DYN_ACK);
+
+  // Flush RX & TX
+  // NRF24_write(NRF24_CMD_FLUSH_RX);
+  NRF24_write(NRF24_CMD_FLUSH_TX);
+
+  NRF24_printStatus();
+  NRF24_printConfig();
+  NRF24_printAddresses();
 
   if (mode == 'r') {
     // Receiver loop
-    SerialIO_puts("Entering rreceiver loop\n");
+    SerialIO_puts("Entering receiver loop\n");
 
     // Set PRIM_RX
     NRF24_setRegisterOr(NRF24_REG_CONFIG, NRF24_PRIM_RX);
@@ -111,23 +143,26 @@ void testRadio(uint8_t input) {
 
     NRF24_CE_High();
 
+    _delay_us(NRF24_TIME_SB_TO_RXTX);
+
     while (!SerialIO_hasData()) {
+      NRF24_printRPD();
+      NRF24_printFifoStatus();
       // Check for data
       if (NRF24_write(NRF24_CMD_NOP) & NRF24_RX_DR) {
-        uint8_t *data = NRF24_read(NRF24_CMD_R_RX_PAYLOAD, 5);
+        uint8_t data[1];
+        NRF24_read(NRF24_CMD_R_RX_PAYLOAD, data, 1);
         SerialIO_puts("Got data: ");
         SerialIO_putb(data[0]);
-        SerialIO_puts(" - ");
-        SerialIO_putb(data[1]);
-        SerialIO_puts(" - ");
-        SerialIO_putb(data[2]);
-        SerialIO_puts(" - ");
-        SerialIO_putb(data[3]);
-        SerialIO_puts(" - ");
-        SerialIO_putb(data[4]);
+        // SerialIO_puts(" - ");
+        // SerialIO_putb(data[1]);
+        // SerialIO_puts(" - ");
+        // SerialIO_putb(data[2]);
+        // SerialIO_puts(" - ");
+        // SerialIO_putb(data[3]);
+        // SerialIO_puts(" - ");
+        // SerialIO_putb(data[4]);
         SerialIO_puts("\n");
-      } else {
-        SerialIO_puts("N");
       }
       _delay_ms(300);
     }
@@ -138,35 +173,42 @@ void testRadio(uint8_t input) {
     NRF24_setRegisterAnd(NRF24_REG_CONFIG, ~(NRF24_PRIM_RX));
 
     SerialIO_recv();
-  } else {
+  } else if (mode == 't') {
     // Transmitter loop
     SerialIO_puts("Entering transmitter loop\n");
     while (!SerialIO_hasData()) {
-      uint8_t payload[5] = { 1, 2, 3, 4, 5 };
+      uint8_t payload[1] = { 123 };
 
-      SerialIO_puts("1 FIFO status: ");
-      SerialIO_putbin(NRF24_getRegister(NRF24_REG_FIFO_STATUS));
-      SerialIO_puts("\n");
+      NRF24_printFifoStatus();
 
       // Set payload
-      NRF24_write(NRF24_CMD_W_TX_PAYLOAD_NO_ACK, payload, 5);
+      NRF24_write(NRF24_CMD_W_TX_PAYLOAD, payload, 1);
+      // NRF24_write(NRF24_CMD_W_TX_PAYLOAD_NO_ACK, payload, 1);
 
-      SerialIO_puts("2 FIFO status: ");
-      SerialIO_putbin(NRF24_getRegister(NRF24_REG_FIFO_STATUS));
-      SerialIO_puts("\n");
+      NRF24_printFifoStatus();
 
       // Pulse CE
       NRF24_CE_High();
       _delay_us(13);
       NRF24_CE_Low();
 
-      SerialIO_puts("3 FIFO status: ");
-      SerialIO_putbin(NRF24_getRegister(NRF24_REG_FIFO_STATUS));
-      SerialIO_puts("\n");
+      NRF24_printFifoStatus();
+      NRF24_printFifoStatus();
+      NRF24_printFifoStatus();
+      NRF24_printFifoStatus();
+      NRF24_printFifoStatus();
+      NRF24_printFifoStatus();
+      NRF24_printFifoStatus();
+      _delay_ms(500);
 
-      _delay_ms(1000);
+      NRF24_write(NRF24_CMD_FLUSH_TX);
+      NRF24_setRegisterAnd(NRF24_REG_STATUS, ~(NRF24_MAX_RT));
+      NRF24_setRegisterOr(NRF24_REG_CONFIG, NRF24_INTERRUPTS);
     }
     SerialIO_recv();
+  } else if (mode == 'c') {
+    NRF24_printFifoStatus();
+    NRF24_printObserveTx();
   }
 
   SerialIO_puts("Powering down...\n");

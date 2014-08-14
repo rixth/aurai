@@ -21,6 +21,7 @@
 // NRF24L01+ register map
 
 #define NRF24_REG_CONFIG  0x00
+#define NRF24_INTERRUPTS  (NRF24_MASK_RX_DR | NRF24_MASK_TX_DS | NRF24_MASK_MAX_RT)
 #define NRF24_MASK_RX_DR  _BV(6)
 #define NRF24_MASK_TX_DS  _BV(5)
 #define NRF24_MASK_MAX_RT _BV(4)
@@ -87,20 +88,23 @@
 #define NRF24_RX_DR      _BV(6)
 #define NRF24_TX_DS      _BV(5)
 #define NRF24_MAX_RT     _BV(4)
+#define NRF24_RX_P_NO    0x0e
 #define NRF24_RX_P_NO2   _BV(3)
 #define NRF24_RX_P_NO1   _BV(2)
 #define NRF24_RX_P_NO0   _BV(1)
 #define NRF24_ST_TX_FULL _BV(0)
 
 #define NRF24_REG_OBSERVE_TX 0x08
-#define NRF24_PLOS_CNT3     _BV(7)
-#define NRF24_PLOS_CNT2     _BV(6)
-#define NRF24_PLOS_CNT1     _BV(5)
-#define NRF24_PLOS_CNT0     _BV(4)
-#define NRF24_ARC_CNT3      _BV(3)
-#define NRF24_ARC_CNT2      _BV(2)
-#define NRF24_ARC_CNT1      _BV(1)
-#define NRF24_ARC_CNT0      _BV(0)
+#define NRF24_PLOS_CNT       0xf0
+#define NRF24_PLOS_CNT3      _BV(7)
+#define NRF24_PLOS_CNT2      _BV(6)
+#define NRF24_PLOS_CNT1      _BV(5)
+#define NRF24_PLOS_CNT0      _BV(4)
+#define NRF24_ARC_CNT        0x0f
+#define NRF24_ARC_CNT3       _BV(3)
+#define NRF24_ARC_CNT2       _BV(2)
+#define NRF24_ARC_CNT1       _BV(1)
+#define NRF24_ARC_CNT0       _BV(0)
 
 #define NRF24_REG_RPD 0x09
 #define NRF24_RPD     _BV(0)
@@ -119,17 +123,17 @@
 
 #define NRF24_REG_TX_ADDR 0x10
 
-#define NRF24_REG_PW_P0 0x11
+#define NRF24_REG_RX_PW_P0 0x11
 
-#define NRF24_REG_PW_P1 0x12
+#define NRF24_REG_RX_PW_P1 0x12
 
-#define NRF24_REG_PW_P2 0x13
+#define NRF24_REG_RX_PW_P2 0x13
 
-#define NRF24_REG_PW_P3 0x14
+#define NRF24_REG_RX_PW_P3 0x14
 
-#define NRF24_REG_PW_P4 0x15
+#define NRF24_REG_RX_PW_P4 0x15
 
-#define NRF24_REG_PW_P5 0x16
+#define NRF24_REG_RX_PW_P5 0x16
 
 #define NRF24_REG_FIFO_STATUS 0x17
 #define NRF24_TX_REUSE       _BV(6)
@@ -157,22 +161,31 @@
 
 void NRF24_init();
 
-uint8_t* NRF24_getRx(uint8_t len);
-void NRF24_setTx(uint8_t* data, uint8_t len);
+void NRF24_printConfig();
+void NRF24_printStatus();
+void NRF24_printFifoStatus();
+void NRF24_printObserveTx();
+void NRF24_printRPD();
+void NRF24_printAddresses();
+void NRF24_printRegister(uint8_t addr, const char name[]);
+
+void NRF24_getRx(uint8_t *buf, uint8_t len);
+void NRF24_setTx(const uint8_t* data, uint8_t len);
 
 uint8_t NRF24_getRegister(uint8_t addr);
-uint8_t* NRF24_getRegister(uint8_t addr, uint8_t len);
+void NRF24_getRegister(uint8_t addr, uint8_t *buf, uint8_t len);
 
 void NRF24_setRegister(uint8_t addr, uint8_t val);
 void NRF24_setRegisterAnd(uint8_t addr, uint8_t val);
 void NRF24_setRegisterOr(uint8_t addr, uint8_t val);
 void NRF24_setRegisterAndOr(uint8_t addr, uint8_t andVal, uint8_t orVal);
-void NRF24_setRegister(uint8_t addr, uint8_t* val, uint8_t len);
+void NRF24_setRegister(uint8_t addr, const uint8_t* val, uint8_t len);
 
 uint8_t NRF24_read(uint8_t cmd);
-uint8_t* NRF24_read(uint8_t cmd, uint8_t len);
+void NRF24_read(uint8_t cmd, uint8_t *buf, uint8_t len);
+
 uint8_t NRF24_write(uint8_t cmd);
 void NRF24_write(uint8_t cmd, uint8_t val);
-void NRF24_write(uint8_t cmd, uint8_t* val, uint8_t len);
+void NRF24_write(uint8_t cmd, const uint8_t* val, uint8_t len);
 
 #endif

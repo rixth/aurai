@@ -7,3 +7,4 @@ dht11: 9
 irled: 5
 nrf24_ce: 26
 nrf24_csn: 27
+trg: 13
