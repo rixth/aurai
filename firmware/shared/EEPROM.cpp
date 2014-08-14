@@ -16,19 +16,13 @@ void EEPROM_init() {
 }
 
 uint8_t EEPROM_read(uint32_t addr) {
-  EEPROM_CS_Low();
-  SPI_transfer(EEPROM_INSTR_READ);
-  SPI_transfer(addr >> 16);
-  SPI_transfer(addr >> 8);
-  SPI_transfer(addr);
-  uint8_t result = SPI_transfer(0);
-  EEPROM_CS_High();
-  return result;
+  uint8_t buf[1];
+  EEPROM_read(addr, buf, 1);
+  return buf[0];
 }
 
-uint8_t* EEPROM_read(uint32_t addr, uint16_t count) {
-  uint8_t data[count];
-  int i;
+void EEPROM_read(uint32_t addr, uint8_t *buf, uint16_t count) {
+  uint8_t i;
 
   EEPROM_CS_Low();
   SPI_transfer(EEPROM_INSTR_READ);
@@ -37,11 +31,10 @@ uint8_t* EEPROM_read(uint32_t addr, uint16_t count) {
   SPI_transfer(addr);
 
   for(i = 0; i < count; i++) {
-    data[i] = SPI_transfer(0);
+    *buf++ = SPI_transfer(0);
   }
 
   EEPROM_CS_High();
-  return data;
 }
 
 void EEPROM_write(uint32_t addr, uint8_t byte) {
@@ -61,7 +54,7 @@ void EEPROM_write(uint32_t addr, uint8_t byte) {
 }
 
 void EEPROM_write(uint32_t addr, uint8_t *bytes, uint16_t count) {
-  int i;
+  uint8_t i;
 
   EEPROM_CS_Low();
   SPI_transfer(EEPROM_INSTR_WREN);

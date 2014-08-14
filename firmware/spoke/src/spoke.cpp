@@ -177,7 +177,7 @@ void testEEPROM(uint8_t input) {
   SerialIO_puts("\n -- EEPROM TEST -- \n");
 
   int addr = 0;
-  uint8_t data[3] = { input, input + 1, input + 2 };
+  uint8_t data[3] = { input, static_cast<uint8_t>(input + 1), static_cast<uint8_t>(input + 2) };
 
   SerialIO_puts("Writing 3 bytes: ");
   SerialIO_putb(data[0]);
@@ -190,12 +190,12 @@ void testEEPROM(uint8_t input) {
   EEPROM_write(addr, data, 3);
 
   SerialIO_puts("Reading 3 bytes: ");
-  uint8_t *d = EEPROM_read(addr, 3);
-  SerialIO_putb(d[0]);
+  EEPROM_read(addr, data, 3);
+  SerialIO_putb(data[0]);
   SerialIO_puts(" - ");
-  SerialIO_putb(d[1]);
+  SerialIO_putb(data[1]);
   SerialIO_puts(" - ");
-  SerialIO_putb(d[2]);
+  SerialIO_putb(data[2]);
   SerialIO_puts("\n");
 }
 
