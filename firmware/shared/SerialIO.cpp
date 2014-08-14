@@ -1,5 +1,6 @@
 #include <SerialIO.h>
 #include <avr/io.h>
+#include <stdlib.h>
 
 // UDRn – USART I/O Data Register n
 // UCSRnA – USART Control and Status Register n A
@@ -34,6 +35,16 @@ void SerialIO_putb(uint8_t byte) {
     SerialIO_put('0' + ((byte / 10) % 10));
   }
   SerialIO_put('0' + (byte % 10));
+}
+
+void SerialIO_puth(uint8_t byte) {
+  char s[3];
+  itoa(byte, s, 16);
+  SerialIO_puts("0x");
+  if (s[1] == NULL) {
+    SerialIO_puts("0");
+  }
+  SerialIO_puts(s);
 }
 
 void SerialIO_putbin(uint8_t byte) {
