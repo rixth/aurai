@@ -11,6 +11,68 @@ void NRF24_init() {
   NRF24_CSN_High();
 }
 
+void NRF24_configure() {
+  NRF24_setRegister(NRF24_REG_RF_CH, 1);
+  NRF24_setRegister(NRF24_REG_RX_PW_P0, sizeof(uint8_t));
+  NRF24_setRegister(NRF24_REG_RX_PW_P1, sizeof(uint8_t));
+  NRF24_setRegister(NRF24_REG_CONFIG, (NRF24_PWR_UP | NRF24_EN_CRC) & ~NRF24_CRCO);
+}
+
+void NRF24_setTxAddr(const uint8_t* data, uint8_t len) {
+  NRF24_setRegister(NRF24_REG_RX_ADDR_P0, data, 5);
+  NRF24_setRegister(NRF24_REG_TX_ADDR, data, 5);
+}
+
+void NRF24_setRxAddr(const uint8_t* data, uint8_t len) {
+  NRF24_setRegister(NRF24_REG_RX_ADDR_P1, data, 5);
+}
+
+void NRF24_rxMode() {
+  NRF24_CE_Low();
+  NRF24_setRegisterOr(NRF24_REG_CONFIG, NRF24_PRIM_RX);
+  NRF24_setRegister(NRF24_REG_STATUS, (NRF24_RX_DR) | (NRF24_TX_DS) | (NRF24_MAX_RT));
+  NRF24_CE_High();
+  NRF24_write(NRF24_CMD_FLUSH_RX);
+}
+
+bool NRF24_send(const uint8_t* val, uint8_t len) {
+  NRF24_CE_Low();
+
+  // Power up tx
+  NRF24_setRegisterAnd(NRF24_REG_CONFIG, ~NRF24_PRIM_RX);
+
+  // Set payload
+  NRF24_write(NRF24_CMD_W_TX_PAYLOAD, val, len);
+
+  // Pulse CE
+  NRF24_CE_High();
+  _delay_us(15);
+  NRF24_CE_Low();
+
+  while (1) {
+    uint8_t status = NRF24_write(NRF24_CMD_NOP);
+    if(status & NRF24_TX_DS || status & NRF24_MAX_RT) {
+      NRF24_rxMode();
+      if (status & NRF24_TX_DS) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+}
+
+bool NRF24_dataAvailable() {
+  // We can short circuit on RX_DR, but if it's not set, we still need
+  // to check the FIFO for any pending packets
+  if (NRF24_write(NRF24_CMD_NOP) & NRF24_RX_DR) {
+    return true;
+  }
+
+  uint8_t fifoStatus = NRF24_getRegister(NRF24_REG_FIFO_STATUS);
+  return !(fifoStatus & NRF24_RX_EMPTY);
+}
+
 void NRF24_printConfig() {
   uint8_t config = NRF24_getRegister(NRF24_REG_CONFIG);
   uint8_t rfCh = NRF24_getRegister(NRF24_REG_RF_CH);
@@ -200,17 +262,17 @@ void NRF24_setRegister(uint8_t addr, uint8_t val) {
 }
 
 void NRF24_setRegisterAnd(uint8_t addr, uint8_t val) {
-  uint8_t existing = NRF24_read(NRF24_CMD_W_REGISTER | addr);
+  uint8_t existing = NRF24_read(NRF24_CMD_R_REGISTER | addr);
   NRF24_write(NRF24_CMD_W_REGISTER | addr, existing & val);
 }
 
 void NRF24_setRegisterOr(uint8_t addr, uint8_t val) {
-  uint8_t existing = NRF24_read(NRF24_CMD_W_REGISTER | addr);
+  uint8_t existing = NRF24_read(NRF24_CMD_R_REGISTER | addr);
   NRF24_write(NRF24_CMD_W_REGISTER | addr, existing | val);
 }
 
 void NRF24_setRegisterAndOr(uint8_t addr, uint8_t andVal, uint8_t orVal) {
-  uint8_t existing = NRF24_read(NRF24_CMD_W_REGISTER | addr);
+  uint8_t existing = NRF24_read(NRF24_CMD_R_REGISTER | addr);
   NRF24_write(NRF24_CMD_W_REGISTER | addr, (existing & andVal) | orVal);
 }
 

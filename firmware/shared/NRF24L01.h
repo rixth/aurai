@@ -88,6 +88,7 @@
 #define NRF24_RX_DR      _BV(6)
 #define NRF24_TX_DS      _BV(5)
 #define NRF24_MAX_RT     _BV(4)
+#define NRF24_ST_CLEAR   ~(NRF24_RX_DR | NRF24_TX_DS | NRF24_MAX_RT)
 #define NRF24_RX_P_NO    0x0e
 #define NRF24_RX_P_NO2   _BV(3)
 #define NRF24_RX_P_NO1   _BV(2)
@@ -160,6 +161,12 @@
 #define NRF24_TIME_CE_PULSE     10
 
 void NRF24_init();
+void NRF24_configure();
+void NRF24_setTxAddr(const uint8_t* data, uint8_t len);
+void NRF24_setRxAddr(const uint8_t* data, uint8_t len);
+void NRF24_rxMode();
+bool NRF24_send(const uint8_t* val, uint8_t len);
+bool NRF24_dataAvailable();
 
 void NRF24_printConfig();
 void NRF24_printStatus();
