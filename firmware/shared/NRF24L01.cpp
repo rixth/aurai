@@ -31,7 +31,7 @@ void NRF24_printConfig() {
   }
   if (config & NRF24_PWR_UP) SerialIO_puts("PWR_UP ");
   if (config & NRF24_PRIM_RX) SerialIO_puts("PRIM_RX ");
-  SerialIO_puts("\n");
+  SerialIO_puts("\r\n");
 
   SerialIO_puts("RF setup: ");
   SerialIO_putbin(rfSetup);
@@ -58,18 +58,18 @@ void NRF24_printConfig() {
   } else {
     SerialIO_puts("-XXdbm ");
   }
-  SerialIO_puts("\n");
+  SerialIO_puts("\r\n");
 
   SerialIO_puts("AW setup: ");
   SerialIO_putbin(aw);
   if (aw & NRF24_AW_5BITS) {
-    SerialIO_puts(" 5 bytes\n");
+    SerialIO_puts(" 5 bytes\r\n");
   } else if (aw & NRF24_AW_4BITS) {
-    SerialIO_puts(" 4 bytes\n");
+    SerialIO_puts(" 4 bytes\r\n");
   } else if (aw & NRF24_AW_3BITS) {
-    SerialIO_puts(" 3 bytes\n");
+    SerialIO_puts(" 3 bytes\r\n");
   } else {
-    SerialIO_puts(" X bytes\n");
+    SerialIO_puts(" X bytes\r\n");
   }
 }
 
@@ -86,7 +86,7 @@ void NRF24_printAddresses() {
     SerialIO_puth(addr[i]);
     SerialIO_puts(" ");
   }
-  SerialIO_puts("\n");
+  SerialIO_puts("\r\n");
 
   for (i = 0; i < 6; i++) {
     if (enRx & _BV(i)) {
@@ -114,7 +114,7 @@ void NRF24_printAddresses() {
         SerialIO_puts(" bytes.");
       }
 
-      SerialIO_puts((enAa & _BV(i)) ? " AA on. \n" : " AA off. \n");
+      SerialIO_puts((enAa & _BV(i)) ? " AA on. \r\n" : " AA off. \r\n");
     }
   }
 }
@@ -130,7 +130,7 @@ void NRF24_printStatus() {
   if (status & NRF24_RX_DR) SerialIO_puts("RX_DR ");
   SerialIO_puts(" RX_P_NO: ");
   SerialIO_putb((status & NRF24_RX_P_NO) > 1);
-  SerialIO_puts("\n");
+  SerialIO_puts("\r\n");
 }
 
 void NRF24_printFifoStatus() {
@@ -151,7 +151,7 @@ void NRF24_printFifoStatus() {
   } else {
     SerialIO_puts("RX_HAS_DATA ");
   }
-  SerialIO_puts("\n");
+  SerialIO_puts("\r\n");
 }
 
 void NRF24_printObserveTx() {
@@ -162,7 +162,7 @@ void NRF24_printObserveTx() {
   SerialIO_putb((status & NRF24_PLOS_CNT) >> 4);
   SerialIO_puts(" ARC_CNT: ");
   SerialIO_putb(status & NRF24_ARC_CNT);
-  SerialIO_puts("\n");
+  SerialIO_puts("\r\n");
 }
 
 void NRF24_printRPD() {
@@ -176,7 +176,7 @@ void NRF24_printRegister(uint8_t addr, const char name[]) {
   SerialIO_putb(reg);
   SerialIO_puts(" ");
   SerialIO_putbin(reg);
-  SerialIO_puts("\n");
+  SerialIO_puts("\r\n");
 }
 
 void NRF24_getRx(uint8_t *buf, uint8_t len) {
