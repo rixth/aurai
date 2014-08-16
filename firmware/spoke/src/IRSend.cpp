@@ -7,21 +7,19 @@
 #include <SerialIO.h>
 
 void IRSend_init() {
-  IRLED_ToOutput();
+}
 
-  IRSend__off();
-
+void IRSend__on() {
   // CTC mode. Toggle OC2B on match
   TCCR2A = _BV(COM2B0) | _BV(WGM21);
 
   // Set overflow
   OCR2A = IRSend_OCR;
-}
-
-void IRSend__on() {
 
   // Start counter again
   TCNT2 = 0;
+
+  IRLED_ToOutput();
 
   // Turn on by enabling prescaler
   TCCR2B = IRSend_2B_REG;
@@ -30,6 +28,7 @@ void IRSend__on() {
 void IRSend__off() {
   // Turn off by clearing TCCR2B
   TCCR2B = 0;
+  IRLED_ToInput();
 }
 
 void IRSend_send(uint32_t data, uint8_t len) {
