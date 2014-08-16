@@ -23,12 +23,9 @@ int main() {
   RED_LED_ToOutput();
   GRN_LED_ToOutput();
   YLW_LED_ToOutput();
-  TRG_ToOutput();
-  TRG_Low();
 
   while (1) {
-    // mainTest(SerialIO_recv());
-    testRadio(SerialIO_recv());
+    mainTest(SerialIO_recv());
   }
 
   return 0;
@@ -216,7 +213,7 @@ void testRadio(uint8_t input) {
 }
 
 void testEEPROM(uint8_t input) {
-  SerialIO_puts("\n -- EEPROM TEST -- \n");
+  SerialIO_puts("\r\n -- EEPROM TEST -- \r\n");
 
   int addr = 0;
   uint8_t data[3] = { input, static_cast<uint8_t>(input + 1), static_cast<uint8_t>(input + 2) };
@@ -227,7 +224,7 @@ void testEEPROM(uint8_t input) {
   SerialIO_putb(data[1]);
   SerialIO_puts(" - ");
   SerialIO_putb(data[2]);
-  SerialIO_puts("\n");
+  SerialIO_puts("\r\n");
 
   EEPROM_write(addr, data, 3);
 
@@ -238,17 +235,17 @@ void testEEPROM(uint8_t input) {
   SerialIO_putb(data[1]);
   SerialIO_puts(" - ");
   SerialIO_putb(data[2]);
-  SerialIO_puts("\n");
+  SerialIO_puts("\r\n");
 }
 
 void testIRLED(uint8_t input) {
-  SerialIO_puts("\n -- IR-LED TEST -- \n");
+  SerialIO_puts("\r\n -- IR-LED TEST -- \r\n");
   IRSend_send(0x8166817E, 32);
-  SerialIO_puts("AC should have toggled power\n");
+  SerialIO_puts("AC should have toggled power\r\n");
 }
 
 void testDHT11(uint8_t input) {
-  SerialIO_puts("\n -- DHT-11 TEST -- \n");
+  SerialIO_puts("\r\n -- DHT-11 TEST -- \r\n");
 
   uint8_t r = DHT11_readSensor();
   SerialIO_puts("Read result: ");
@@ -257,11 +254,11 @@ void testDHT11(uint8_t input) {
   SerialIO_putb(DHT11_temperature());
   SerialIO_puts("C Humidity: ");
   SerialIO_putb(DHT11_humidity());
-  SerialIO_puts("%\n");
+  SerialIO_puts("%\r\n");
 }
 
 void testDIAGLEDS(uint8_t input) {
-  SerialIO_puts("\n -- DIAG LED TEST -- \n");
+  SerialIO_puts("\r\n -- DIAG LED TEST -- \r\n");
 
   if (input == '1') {
     RED_LED_High();
