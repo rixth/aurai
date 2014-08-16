@@ -2,7 +2,7 @@
 
 #include <pins.h>
 #include <SPI.h>
-#include <SerialIO.h>
+#include <Serial.h>
 #include <EEPROM.h>
 #include <DHT11.h>
 #include <IRSend.h>
@@ -11,7 +11,7 @@
 #include <spoke.h>
 
 int main() {
-  SerialIO_Init();
+  Serial.begin();
   EEPROM_init();
   IRSend_init();
   SPI_begin();
@@ -25,7 +25,7 @@ int main() {
   YLW_LED_ToOutput();
 
   while (1) {
-    mainTest(SerialIO_recv());
+    mainTest(Serial.read());
   }
 
   return 0;
@@ -34,7 +34,7 @@ int main() {
 
 void testRadio(uint8_t input) {
   if (input != 'c' && input != 's') {
-    SerialIO_puts("\r\n -- Skipping radio test -- \r\n");
+    Serial.print("\r\n -- Skipping radio test -- \r\n");
     return;
   }
 
@@ -49,22 +49,22 @@ void testRadio(uint8_t input) {
   uint8_t payload[1] = { 1 };
 
   if (input == 'c') {
-    SerialIO_puts("\r\n -- Radio test (client) -- \r\n");
+    Serial.print("\r\n -- Radio test (client) -- \r\n");
 
     // Client setup
     NRF24_setRxAddr((uint8_t *)"clie1", 5);
     NRF24_setTxAddr((uint8_t *)"serv1", 5);
 
     // Client loop
-    while (!SerialIO_hasData()) {
-      SerialIO_puts("TX ");
-      SerialIO_putb(++payload[0]);
-      SerialIO_puts(":");
+    while (!Serial.available()) {
+      Serial.print("TX ");
+      Serial.putb(++payload[0]);
+      Serial.print(":");
 
       if (NRF24_send(payload, 1)) {
-        SerialIO_puts(" sent. RX: ");
+        Serial.print(" sent. RX: ");
       } else {
-        SerialIO_puts(" failed. RX: ");
+        Serial.print(" failed. RX: ");
       }
 
       _delay_ms(10);
@@ -72,7 +72,7 @@ void testRadio(uint8_t input) {
       int i = 0;
       while(!NRF24_dataAvailable()){
         if (i++ > 1000) {
-          SerialIO_puts("TIMEOUT\r\n");
+          Serial.print("TIMEOUT\r\n");
           break;
         }
         _delay_ms(1);
@@ -81,15 +81,15 @@ void testRadio(uint8_t input) {
       if (i < 1000) {
         uint8_t data[1];
         NRF24_read(NRF24_CMD_R_RX_PAYLOAD, data, 1);
-        SerialIO_putb(data[0]);
-        SerialIO_puts("\r\n");
+        Serial.putb(data[0]);
+        Serial.print("\r\n");
         NRF24_write(NRF24_CMD_FLUSH_RX);
       }
 
       _delay_ms(1000);
     }
   } else if (input == 's') {
-    SerialIO_puts("\r\n -- Radio test (server) -- \r\n");
+    Serial.print("\r\n -- Radio test (server) -- \r\n");
 
     // Server setup
     NRF24_setRxAddr((uint8_t *)"serv1", 5);
@@ -97,25 +97,25 @@ void testRadio(uint8_t input) {
     NRF24_setTxAddr((uint8_t *)"clie1", 5);
 
     // Server loop
-    while (!SerialIO_hasData()) {
+    while (!Serial.available()) {
       int i = 0;
       while(1) {
         if (NRF24_dataAvailable()) {
-          SerialIO_puts("RX: ");
+          Serial.print("RX: ");
           uint8_t data[1];
           NRF24_read(NRF24_CMD_R_RX_PAYLOAD, data, 1);
-          SerialIO_putb(data[0]);
-          SerialIO_puts(" TX: ");
-          SerialIO_putb(data[0]);
+          Serial.putb(data[0]);
+          Serial.print(" TX: ");
+          Serial.putb(data[0]);
 
           if (NRF24_send(data, 1)) {
-            SerialIO_puts(" sent!\r\n");
+            Serial.print(" sent!\r\n");
           } else {
-            SerialIO_puts(" failed!\r\n");
+            Serial.print(" failed!\r\n");
           }
         } else {
           if (i++ > 4000) {
-            SerialIO_puts("Timeout waiting for client!\r\n");
+            Serial.print("Timeout waiting for client!\r\n");
             break;
           }
           _delay_ms(1);
@@ -125,56 +125,56 @@ void testRadio(uint8_t input) {
   }
 
   // Consume the char that was used to break the loop
-  SerialIO_recv();
+  Serial.read();
 }
 
 void testEEPROM(uint8_t input) {
-  SerialIO_puts("\r\n -- EEPROM TEST -- \r\n");
+  Serial.print("\r\n -- EEPROM TEST -- \r\n");
 
   int addr = 0;
   uint8_t data[3] = { input, static_cast<uint8_t>(input + 1), static_cast<uint8_t>(input + 2) };
 
-  SerialIO_puts("Writing 3 bytes: ");
-  SerialIO_putb(data[0]);
-  SerialIO_puts(" - ");
-  SerialIO_putb(data[1]);
-  SerialIO_puts(" - ");
-  SerialIO_putb(data[2]);
-  SerialIO_puts("\r\n");
+  Serial.print("Writing 3 bytes: ");
+  Serial.putb(data[0]);
+  Serial.print(" - ");
+  Serial.putb(data[1]);
+  Serial.print(" - ");
+  Serial.putb(data[2]);
+  Serial.print("\r\n");
 
   EEPROM_write(addr, data, 3);
 
-  SerialIO_puts("Reading 3 bytes: ");
+  Serial.print("Reading 3 bytes: ");
   EEPROM_read(addr, data, 3);
-  SerialIO_putb(data[0]);
-  SerialIO_puts(" - ");
-  SerialIO_putb(data[1]);
-  SerialIO_puts(" - ");
-  SerialIO_putb(data[2]);
-  SerialIO_puts("\r\n");
+  Serial.putb(data[0]);
+  Serial.print(" - ");
+  Serial.putb(data[1]);
+  Serial.print(" - ");
+  Serial.putb(data[2]);
+  Serial.print("\r\n");
 }
 
 void testIRLED(uint8_t input) {
-  SerialIO_puts("\r\n -- IR-LED TEST -- \r\n");
+  Serial.print("\r\n -- IR-LED TEST -- \r\n");
   IRSend_send(0x8166817E, 32);
-  SerialIO_puts("AC should have toggled power\r\n");
+  Serial.print("AC should have toggled power\r\n");
 }
 
 void testDHT11(uint8_t input) {
-  SerialIO_puts("\r\n -- DHT-11 TEST -- \r\n");
+  Serial.print("\r\n -- DHT-11 TEST -- \r\n");
 
   uint8_t r = DHT11_readSensor();
-  SerialIO_puts("Read result: ");
-  SerialIO_putb(r);
-  SerialIO_puts(" Temp: ");
-  SerialIO_putb(DHT11_temperature());
-  SerialIO_puts("C Humidity: ");
-  SerialIO_putb(DHT11_humidity());
-  SerialIO_puts("%\r\n");
+  Serial.print("Read result: ");
+  Serial.putb(r);
+  Serial.print(" Temp: ");
+  Serial.putb(DHT11_temperature());
+  Serial.print("C Humidity: ");
+  Serial.putb(DHT11_humidity());
+  Serial.print("%\r\n");
 }
 
 void testDIAGLEDS(uint8_t input) {
-  SerialIO_puts("\r\n -- DIAG LED TEST -- \r\n");
+  Serial.print("\r\n -- DIAG LED TEST -- \r\n");
 
   if (input == '1') {
     RED_LED_High();

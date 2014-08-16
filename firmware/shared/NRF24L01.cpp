@@ -1,5 +1,5 @@
 #include "SPI.h"
-#include "SerialIO.h"
+#include "Serial.h"
 #include "NRF24L01.h"
 #include "pins.h"
 #include "util/delay.h"
@@ -79,59 +79,59 @@ void NRF24_printConfig() {
   uint8_t rfSetup = NRF24_getRegister(NRF24_REG_RF_SETUP);
   uint8_t aw = NRF24_getRegister(NRF24_REG_SETUP_AW);
 
-  SerialIO_puts("Config: ");
-  SerialIO_putbin(config);
-  SerialIO_puts(" ");
-  if (!(config & NRF24_MASK_RX_DR)) SerialIO_puts("MASK_RX_DR ");
-  if (!(config & NRF24_MASK_TX_DS)) SerialIO_puts("MASK_TX_DS ");
-  if (!(config & NRF24_MASK_MAX_RT)) SerialIO_puts("MASK_MAX_RT ");
-  if (config & NRF24_EN_CRC) SerialIO_puts("EN_CRC ");
+  Serial.print("Config: ");
+  Serial.putbin(config);
+  Serial.print(" ");
+  if (!(config & NRF24_MASK_RX_DR)) Serial.print("MASK_RX_DR ");
+  if (!(config & NRF24_MASK_TX_DS)) Serial.print("MASK_TX_DS ");
+  if (!(config & NRF24_MASK_MAX_RT)) Serial.print("MASK_MAX_RT ");
+  if (config & NRF24_EN_CRC) Serial.print("EN_CRC ");
   if (config & NRF24_CRCO) {
-    SerialIO_puts("CRC-2 ");
+    Serial.print("CRC-2 ");
   } else {
-    SerialIO_puts("CRC-1 ");
+    Serial.print("CRC-1 ");
   }
-  if (config & NRF24_PWR_UP) SerialIO_puts("PWR_UP ");
-  if (config & NRF24_PRIM_RX) SerialIO_puts("PRIM_RX ");
-  SerialIO_puts("\r\n");
+  if (config & NRF24_PWR_UP) Serial.print("PWR_UP ");
+  if (config & NRF24_PRIM_RX) Serial.print("PRIM_RX ");
+  Serial.print("\r\n");
 
-  SerialIO_puts("RF setup: ");
-  SerialIO_putbin(rfSetup);
-  SerialIO_puts(" CH: ");
-  SerialIO_putb(rfCh);
-  SerialIO_puts(" ");
-  if (rfSetup & NRF24_CONT_WAVE) SerialIO_puts("CONT_WAVE ");
-  if (rfSetup & NRF24_PLL_LOCK) SerialIO_puts("PLL_LOCK ");
+  Serial.print("RF setup: ");
+  Serial.putbin(rfSetup);
+  Serial.print(" CH: ");
+  Serial.putb(rfCh);
+  Serial.print(" ");
+  if (rfSetup & NRF24_CONT_WAVE) Serial.print("CONT_WAVE ");
+  if (rfSetup & NRF24_PLL_LOCK) Serial.print("PLL_LOCK ");
   if (rfSetup & NRF24_RF_DR_250KB) {
-    SerialIO_puts("250kbps ");
+    Serial.print("250kbps ");
   } else if (rfSetup & NRF24_RF_DR_2MBPS) {
-    SerialIO_puts("2mbps ");
+    Serial.print("2mbps ");
   } else {
-    SerialIO_puts("1mbps ");
+    Serial.print("1mbps ");
   }
   if ((rfSetup & NRF24_RF_PWR0) && (rfSetup & NRF24_RF_PWR1)) {
-    SerialIO_puts("0dbm ");
+    Serial.print("0dbm ");
   } else if (!(rfSetup & NRF24_RF_PWR0) && (rfSetup & NRF24_RF_PWR1)) {
-    SerialIO_puts("-6dbm ");
+    Serial.print("-6dbm ");
   } else if ((rfSetup & NRF24_RF_PWR0) && !(rfSetup & NRF24_RF_PWR1)) {
-    SerialIO_puts("-12dbm ");
+    Serial.print("-12dbm ");
   } else if (!(rfSetup & NRF24_RF_PWR0) && !(rfSetup & NRF24_RF_PWR1)) {
-    SerialIO_puts("-18dbm ");
+    Serial.print("-18dbm ");
   } else {
-    SerialIO_puts("-XXdbm ");
+    Serial.print("-XXdbm ");
   }
-  SerialIO_puts("\r\n");
+  Serial.print("\r\n");
 
-  SerialIO_puts("AW setup: ");
-  SerialIO_putbin(aw);
+  Serial.print("AW setup: ");
+  Serial.putbin(aw);
   if (aw & NRF24_AW_5BITS) {
-    SerialIO_puts(" 5 bytes\r\n");
+    Serial.print(" 5 bytes\r\n");
   } else if (aw & NRF24_AW_4BITS) {
-    SerialIO_puts(" 4 bytes\r\n");
+    Serial.print(" 4 bytes\r\n");
   } else if (aw & NRF24_AW_3BITS) {
-    SerialIO_puts(" 3 bytes\r\n");
+    Serial.print(" 3 bytes\r\n");
   } else {
-    SerialIO_puts(" X bytes\r\n");
+    Serial.print(" X bytes\r\n");
   }
 }
 
@@ -142,89 +142,89 @@ void NRF24_printAddresses() {
   uint8_t i, j;
   uint8_t addr[5];
 
-  SerialIO_puts("TX  Address: ");
+  Serial.print("TX  Address: ");
   NRF24_getRegister(NRF24_REG_TX_ADDR, addr, 5);
   for(i = 0; i < 5; i++) {
-    SerialIO_puth(addr[i]);
-    SerialIO_puts(" ");
+    Serial.puth(addr[i]);
+    Serial.print(" ");
   }
-  SerialIO_puts("\r\n");
+  Serial.print("\r\n");
 
   for (i = 0; i < 6; i++) {
     if (enRx & _BV(i)) {
-      SerialIO_puts("RX");
-      SerialIO_putb(i);
-      SerialIO_puts(" Address: ");
+      Serial.print("RX");
+      Serial.putb(i);
+      Serial.print(" Address: ");
 
       if (i == 0 || i == 1) {
         NRF24_getRegister(NRF24_REG_RX_ADDR_P0 + i, addr, 5);
         for(j = 0; j < 5; j++) {
-          SerialIO_puth(addr[j]);
-          SerialIO_puts(" ");
+          Serial.puth(addr[j]);
+          Serial.print(" ");
         }
       } else {
         NRF24_getRegister(NRF24_REG_RX_ADDR_P0 + i, addr, 1);
-        SerialIO_puth(addr[0]);
-        SerialIO_puts(" ");
+        Serial.puth(addr[0]);
+        Serial.print(" ");
       }
 
-      SerialIO_puts("Payload: ");
+      Serial.print("Payload: ");
       if (dynPld & _BV(i)) {
-        SerialIO_puts("dynamic.");
+        Serial.print("dynamic.");
       } else {
-        SerialIO_putb(NRF24_getRegister(NRF24_REG_RX_PW_P0 + i));
-        SerialIO_puts(" bytes.");
+        Serial.putb(NRF24_getRegister(NRF24_REG_RX_PW_P0 + i));
+        Serial.print(" bytes.");
       }
 
-      SerialIO_puts((enAa & _BV(i)) ? " AA on. \r\n" : " AA off. \r\n");
+      Serial.print((enAa & _BV(i)) ? " AA on. \r\n" : " AA off. \r\n");
     }
   }
 }
 
 void NRF24_printStatus() {
   uint8_t status = NRF24_write(NRF24_CMD_NOP);
-  SerialIO_puts("Status: ");
-  SerialIO_putbin(status);
-  SerialIO_puts(" ");
-  if (status & NRF24_ST_TX_FULL) SerialIO_puts("ST_TX_FULL ");
-  if (status & NRF24_MAX_RT) SerialIO_puts("MAX_RT ");
-  if (status & NRF24_TX_DS) SerialIO_puts("TX_DS ");
-  if (status & NRF24_RX_DR) SerialIO_puts("RX_DR ");
-  SerialIO_puts(" RX_P_NO: ");
-  SerialIO_putb((status & NRF24_RX_P_NO) > 1);
-  SerialIO_puts("\r\n");
+  Serial.print("Status: ");
+  Serial.putbin(status);
+  Serial.print(" ");
+  if (status & NRF24_ST_TX_FULL) Serial.print("ST_TX_FULL ");
+  if (status & NRF24_MAX_RT) Serial.print("MAX_RT ");
+  if (status & NRF24_TX_DS) Serial.print("TX_DS ");
+  if (status & NRF24_RX_DR) Serial.print("RX_DR ");
+  Serial.print(" RX_P_NO: ");
+  Serial.putb((status & NRF24_RX_P_NO) > 1);
+  Serial.print("\r\n");
 }
 
 void NRF24_printFifoStatus() {
   uint8_t status = NRF24_getRegister(NRF24_REG_FIFO_STATUS);
-  SerialIO_puts("FIFO: ");
-  SerialIO_putbin(status);
-  SerialIO_puts(" ");
-  if (status & NRF24_TX_REUSE) SerialIO_puts("TX_REUSE ");
-  if (status & NRF24_TX_FULL) SerialIO_puts("TX_FULL ");
+  Serial.print("FIFO: ");
+  Serial.putbin(status);
+  Serial.print(" ");
+  if (status & NRF24_TX_REUSE) Serial.print("TX_REUSE ");
+  if (status & NRF24_TX_FULL) Serial.print("TX_FULL ");
   if (status & NRF24_TX_EMPTY) {
-    SerialIO_puts("TX_EMPTY ");
+    Serial.print("TX_EMPTY ");
   } else {
-    SerialIO_puts("TX_HAS_DATA ");
+    Serial.print("TX_HAS_DATA ");
   }
-  if (status & NRF24_RX_FULL) SerialIO_puts("RX_FULL ");
+  if (status & NRF24_RX_FULL) Serial.print("RX_FULL ");
   if (status & NRF24_RX_EMPTY) {
-    SerialIO_puts("RX_EMPTY ");
+    Serial.print("RX_EMPTY ");
   } else {
-    SerialIO_puts("RX_HAS_DATA ");
+    Serial.print("RX_HAS_DATA ");
   }
-  SerialIO_puts("\r\n");
+  Serial.print("\r\n");
 }
 
 void NRF24_printObserveTx() {
   uint8_t status = NRF24_getRegister(NRF24_REG_OBSERVE_TX);
-  SerialIO_puts("ObserveTx: ");
-  SerialIO_putbin(status);
-  SerialIO_puts(" PLOS_CNT: ");
-  SerialIO_putb((status & NRF24_PLOS_CNT) >> 4);
-  SerialIO_puts(" ARC_CNT: ");
-  SerialIO_putb(status & NRF24_ARC_CNT);
-  SerialIO_puts("\r\n");
+  Serial.print("ObserveTx: ");
+  Serial.putbin(status);
+  Serial.print(" PLOS_CNT: ");
+  Serial.putb((status & NRF24_PLOS_CNT) >> 4);
+  Serial.print(" ARC_CNT: ");
+  Serial.putb(status & NRF24_ARC_CNT);
+  Serial.print("\r\n");
 }
 
 void NRF24_printRPD() {
@@ -233,12 +233,12 @@ void NRF24_printRPD() {
 
 void NRF24_printRegister(uint8_t addr, const char name[]) {
   uint8_t reg = NRF24_getRegister(addr);
-  SerialIO_puts(name);
-  SerialIO_puts(": ");
-  SerialIO_putb(reg);
-  SerialIO_puts(" ");
-  SerialIO_putbin(reg);
-  SerialIO_puts("\r\n");
+  Serial.print(name);
+  Serial.print(": ");
+  Serial.putb(reg);
+  Serial.print(" ");
+  Serial.putbin(reg);
+  Serial.print("\r\n");
 }
 
 void NRF24_getRx(uint8_t *buf, uint8_t len) {

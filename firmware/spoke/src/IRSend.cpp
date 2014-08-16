@@ -4,7 +4,6 @@
 #include <stdint.h>
 #include <IRSend.h>
 #include <pins.h>
-#include <SerialIO.h>
 
 void IRSend_init() {
 }
