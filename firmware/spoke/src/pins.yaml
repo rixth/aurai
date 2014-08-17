@@ -1,5 +1,4 @@
 ---
-eeprom_cs: 4
 red_led: 24
 ylw_led: 25
 grn_led: 28
@@ -7,4 +6,3 @@ dht11: 9
 irled: 5
 nrf24_ce: 26
 nrf24_csn: 27
-trg: 13
