@@ -80,6 +80,11 @@ bool NRF24_dataAvailable() {
   return !(fifoStatus & NRF24_RX_EMPTY);
 }
 
+void NRF24_flush() {
+  NRF24_write(NRF24_CMD_FLUSH_TX);
+  NRF24_write(NRF24_CMD_FLUSH_RX);
+}
+
 void NRF24_test(uint8_t input) {
   if (input != 'c' && input != 's') {
     Serial.print("\r\n -- Skipping radio test -- \r\n");

@@ -168,6 +168,7 @@ void NRF24_rxMode();
 bool NRF24_send(const uint8_t* val, uint8_t len);
 void NRF24_fetch(uint8_t *buf, uint8_t len);
 bool NRF24_dataAvailable();
+void NRF24_flush();
 
 void NRF24_test(uint8_t input);
 
