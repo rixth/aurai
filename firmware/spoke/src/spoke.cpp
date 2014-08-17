@@ -14,7 +14,7 @@ int main() {
   Serial.begin();
   EEPROM_init();
   IRSend_init();
-  SPI_begin();
+  SPI.begin();
   NRF24_init();
 
   // Let components (esp. radio) wake up

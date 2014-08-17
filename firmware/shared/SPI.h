@@ -26,10 +26,15 @@
 #define SPI_LSBFIRST 1
 #define SPI_MSBFIRST 2
 
-void SPI_begin();
-void SPI_end();
-void SPI_setBitOrder(uint8_t order);
-void SPI_setClockDivider(uint8_t divider);
-void SPI_setDataMode(uint8_t mode);
-void SPI_setUse2x(bool use2x);
-uint8_t SPI_transfer(uint8_t val);
+class NativeSPI {
+public:
+  static void begin();
+  static void end();
+  static void setBitOrder(uint8_t order);
+  static void setClockDivider(uint8_t divider);
+  static void setDataMode(uint8_t mode);
+  static void setUse2x(bool use2x);
+  static uint8_t transfer(uint8_t val);
+};
+
+extern NativeSPI SPI;

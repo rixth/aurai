@@ -289,33 +289,33 @@ uint8_t NRF24_read(uint8_t cmd) {
 void NRF24_read(uint8_t cmd, uint8_t *buf, uint8_t len) {
   uint8_t i;
   NRF24_CSN_Low();
-  SPI_transfer(cmd);
+  SPI.transfer(cmd);
   for (i = 0; i < len; i++) {
-    *buf++ = SPI_transfer(0);
+    *buf++ = SPI.transfer(0);
   }
   NRF24_CSN_High();
 }
 
 uint8_t NRF24_write(uint8_t cmd) {
   NRF24_CSN_Low();
-  uint8_t result = SPI_transfer(cmd);
+  uint8_t result = SPI.transfer(cmd);
   NRF24_CSN_High();
   return result;
 }
 
 void NRF24_write(uint8_t cmd, uint8_t val) {
   NRF24_CSN_Low();
-  SPI_transfer(cmd);
-  SPI_transfer(val);
+  SPI.transfer(cmd);
+  SPI.transfer(val);
   NRF24_CSN_High();
 }
 
 void NRF24_write(uint8_t cmd, const uint8_t* val, uint8_t len) {
   uint8_t i;
   NRF24_CSN_Low();
-  SPI_transfer(cmd);
+  SPI.transfer(cmd);
   for (i = 0; i < len; i++) {
-    SPI_transfer(val[i]);
+    SPI.transfer(val[i]);
   }
   NRF24_CSN_High();
 }

@@ -3,7 +3,7 @@
 
 #include <SPI.h>
 
-void SPI_begin() {
+void NativeSPI::begin() {
   SS_DDR |= SS_MASK;
   SS_PORT |= SS_MASK;
 
@@ -14,11 +14,11 @@ void SPI_begin() {
   MISO_DDR &= ~(MISO_MASK);
 }
 
-void SPI_end() {
+void NativeSPI::end() {
   SPCR &= ~(_BV(SPE));
 }
 
-void SPI_setBitOrder(uint8_t order) {
+void NativeSPI::setBitOrder(uint8_t order) {
   if (order == SPI_LSBFIRST) {
     SPCR |= _BV(DORD);
   } else {
@@ -26,15 +26,15 @@ void SPI_setBitOrder(uint8_t order) {
   }
 }
 
-void SPI_setClockDivider(uint8_t divider) {
+void NativeSPI::setClockDivider(uint8_t divider) {
   SPCR = (SPCR & ~(3)) | divider;
 }
 
-void SPI_setDataMode(uint8_t mode) {
+void NativeSPI::setDataMode(uint8_t mode) {
   SPCR = (SPCR & ~(12)) | mode;
 }
 
-void SPI_setUse2x(bool use2x) {
+void NativeSPI::setUse2x(bool use2x) {
   if (use2x) {
     SPSR |= _BV(SPI2X);
   } else {
@@ -42,7 +42,7 @@ void SPI_setUse2x(bool use2x) {
   }
 }
 
-uint8_t SPI_transfer(uint8_t val) {
+uint8_t NativeSPI::transfer(uint8_t val) {
   SPDR = val;
   loop_until_bit_is_set(SPSR, SPIF);
   return SPDR;

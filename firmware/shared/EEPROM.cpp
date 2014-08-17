@@ -25,13 +25,13 @@ void EEPROM_read(uint32_t addr, uint8_t *buf, uint16_t count) {
   uint8_t i;
 
   EEPROM_CS_Low();
-  SPI_transfer(EEPROM_INSTR_READ);
-  SPI_transfer(addr >> 16);
-  SPI_transfer(addr >> 8);
-  SPI_transfer(addr);
+  SPI.transfer(EEPROM_INSTR_READ);
+  SPI.transfer(addr >> 16);
+  SPI.transfer(addr >> 8);
+  SPI.transfer(addr);
 
   for(i = 0; i < count; i++) {
-    *buf++ = SPI_transfer(0);
+    *buf++ = SPI.transfer(0);
   }
 
   EEPROM_CS_High();
@@ -39,15 +39,15 @@ void EEPROM_read(uint32_t addr, uint8_t *buf, uint16_t count) {
 
 void EEPROM_write(uint32_t addr, uint8_t byte) {
   EEPROM_CS_Low();
-  SPI_transfer(EEPROM_INSTR_WREN);
+  SPI.transfer(EEPROM_INSTR_WREN);
   EEPROM_CS_High();
   _delay_us(10);
   EEPROM_CS_Low();
-  SPI_transfer(EEPROM_INSTR_WRITE);
-  SPI_transfer(addr >> 16);
-  SPI_transfer(addr >> 8);
-  SPI_transfer(addr);
-  SPI_transfer(byte);
+  SPI.transfer(EEPROM_INSTR_WRITE);
+  SPI.transfer(addr >> 16);
+  SPI.transfer(addr >> 8);
+  SPI.transfer(addr);
+  SPI.transfer(byte);
   EEPROM_CS_High();
 
   EEPROM__loop_until_written();
@@ -57,17 +57,17 @@ void EEPROM_write(uint32_t addr, uint8_t *bytes, uint16_t count) {
   uint8_t i;
 
   EEPROM_CS_Low();
-  SPI_transfer(EEPROM_INSTR_WREN);
+  SPI.transfer(EEPROM_INSTR_WREN);
   EEPROM_CS_High();
   _delay_us(10);
   EEPROM_CS_Low();
-  SPI_transfer(EEPROM_INSTR_WRITE);
-  SPI_transfer(addr >> 16);
-  SPI_transfer(addr >> 8);
-  SPI_transfer(addr);
+  SPI.transfer(EEPROM_INSTR_WRITE);
+  SPI.transfer(addr >> 16);
+  SPI.transfer(addr >> 8);
+  SPI.transfer(addr);
 
   for(i = 0; i < count; i++) {
-    SPI_transfer(bytes[i]);
+    SPI.transfer(bytes[i]);
   }
 
   EEPROM_CS_High();
@@ -78,8 +78,8 @@ void EEPROM_write(uint32_t addr, uint8_t *bytes, uint16_t count) {
 void EEPROM__loop_until_written() {
   while (1) {
     EEPROM_CS_Low();
-    SPI_transfer(EEPROM_INSTR_RDSR);
-    uint8_t status = SPI_transfer(0);
+    SPI.transfer(EEPROM_INSTR_RDSR);
+    uint8_t status = SPI.transfer(0);
     EEPROM_CS_High();
     if (bit_is_clear(status, 0)) {
       break;
