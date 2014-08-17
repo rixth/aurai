@@ -1,5 +1,5 @@
 ---
-eeprom_cs: 4
+flash_cs: 4
 red_led: 24
 ylw_led: 25
 grn_led: 28
