@@ -55,7 +55,7 @@ void HardwareSerial::puth(uint8_t byte) {
   char s[3];
   itoa(byte, s, 16);
   print("0x");
-  if (s[1] == NULL) {
+  if (byte < 16) {
     print("0");
   }
   print(s);
