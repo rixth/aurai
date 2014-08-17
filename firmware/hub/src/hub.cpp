@@ -7,6 +7,7 @@
 #include <Flash.h>
 #include <EEPROM.h>
 #include <NRF24L01.h>
+#include <SpokeCommands.h>
 
 #include <hub.h>
 
@@ -18,10 +19,35 @@ int main() {
   NRF24_init();
 
   while (1) {
-    mainTest(Serial.read());
+    Serial.println("Aurai HUB. Press b to boot, any other key to test.");
+    uint8_t input = Serial.read();
+    if (input == 'b') {
+      Serial.println("Booting...");
+      boot();
+    } else {
+      Serial.println("Testing...");
+      mainTest(input);
+    }
   }
 
   return 0;
+}
+
+void boot() {
+  // Configure radio
+  NRF24_flush();
+  NRF24_configure();
+  NRF24_setTxAddr((uint8_t *)"spoke", 5);
+  NRF24_setRxAddr((uint8_t *)"hub__", 5);
+
+  // Transmit a packet
+  Serial.print("Sending packet: ");
+  uint8_t payload[1] = { SPOKE_CMD_POWER_PRM_TOGGLE };
+  if (NRF24_send(payload, 1)) {
+    Serial.println("sent.");
+  } else {
+    Serial.println("failed.");
+  }
 }
 
 void mainTest(uint8_t input) {
