@@ -63,6 +63,12 @@ bool NRF24_send(const uint8_t* val, uint8_t len) {
   }
 }
 
+void NRF24_fetch(uint8_t *buf, uint8_t len) {
+  NRF24_read(NRF24_CMD_R_RX_PAYLOAD, buf, len);
+  // Clear RX_DR bit by writing to it
+  NRF24_setRegister(NRF24_REG_STATUS, NRF24_RX_DR);
+}
+
 bool NRF24_dataAvailable() {
   // We can short circuit on RX_DR, but if it's not set, we still need
   // to check the FIFO for any pending packets
