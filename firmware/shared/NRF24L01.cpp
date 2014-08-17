@@ -1,6 +1,7 @@
 #include "SPI.h"
 #include "Serial.h"
 #include "NRF24L01.h"
+#include "DiagLEDS.h"
 #include "pins.h"
 #include "util/delay.h"
 
@@ -87,7 +88,7 @@ void NRF24_test(uint8_t input) {
   NRF24_printConfig();
   NRF24_printAddresses();
 
-  uint8_t payload[1] = { 1 };
+  uint8_t payload[1] = { 0 };
 
   if (input == 'c') {
     Serial.print("\r\n -- Radio test (client) -- \r\n");
@@ -101,6 +102,12 @@ void NRF24_test(uint8_t input) {
       Serial.print("TX ");
       Serial.putb(++payload[0]);
       Serial.print(":");
+
+      DiagLEDS_set(payload[0]);
+
+      if (payload[0] == 7) {
+        payload[0] = 0;
+      }
 
       if (NRF24_send(payload, 1)) {
         Serial.print(" sent. RX: ");
@@ -148,6 +155,8 @@ void NRF24_test(uint8_t input) {
           Serial.putb(data[0]);
           Serial.print(" TX: ");
           Serial.putb(data[0]);
+
+          DiagLEDS_set(data[0]);
 
           if (NRF24_send(data, 1)) {
             Serial.print(" sent!\r\n");
