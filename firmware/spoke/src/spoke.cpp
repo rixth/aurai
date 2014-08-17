@@ -2,6 +2,7 @@
 
 #include <pins.h>
 #include <SPI.h>
+#include <DiagLEDS.h>
 #include <Serial.h>
 #include <EEPROM.h>
 #include <DHT11.h>
@@ -15,6 +16,7 @@ int main() {
   EEPROM_init();
   IRSend_init();
   SPI.begin();
+  DiagLEDS_init();
   NRF24_init();
 
   // Let components (esp. radio) wake up

@@ -36,6 +36,7 @@ CXX_SOURCES = $(shell find $(SRCDIR) -type f -name *.cpp)
 
 CORE_LIB_SRC =
 CORE_LIB_CXX_SRC = \
+	$(SHAREDDIR)/DiagLEDS.cpp \
 	$(SHAREDDIR)/Serial.cpp \
 	$(SHAREDDIR)/SPI.cpp \
 	$(SHAREDDIR)/EEPROM.cpp \
