@@ -1,0 +1,7 @@
+---
+eeprom_cs: 4
+red_led: 24
+ylw_led: 25
+grn_led: 28
+nrf24_ce: 26
+nrf24_csn: 27

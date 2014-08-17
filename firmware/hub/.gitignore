@@ -1,0 +1,3 @@
+bin/*.eep
+bin/*.elf
+bin/*.hex
