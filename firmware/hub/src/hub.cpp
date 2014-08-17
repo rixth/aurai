@@ -41,13 +41,42 @@ void boot() {
   NRF24_setRxAddr((uint8_t *)"hub__", 5);
 
   // Transmit a packet
-  Serial.print("Sending packet: ");
+  Serial.print("Sending power toggle: ");
   uint8_t payload[1] = { SPOKE_CMD_POWER_PRM_TOGGLE };
   if (NRF24_send(payload, 1)) {
     Serial.println("sent.");
   } else {
     Serial.println("failed.");
   }
+
+  // Transmit another
+  Serial.print("Sending status request packet: ");
+  payload[0] = SPOKE_CMD_STATUS;
+  if (NRF24_send(payload, 1)) {
+    Serial.println("sent.");
+  } else {
+    Serial.println("failed.");
+  }
+
+  Serial.print("Waiting for report... ");
+
+  NRF24_rxMode();
+
+  int i = 0;
+  while(!NRF24_dataAvailable()){
+    if (i++ > 1000) {
+      Serial.println(" timeout");
+      return;
+    }
+    _delay_ms(1);
+  }
+
+  uint8_t data[1];
+  NRF24_fetch(data, 1);
+
+  Serial.print("Humidity: ");
+  Serial.putb(data[0]);
+  Serial.println("%");
 }
 
 void mainTest(uint8_t input) {

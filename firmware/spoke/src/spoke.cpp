@@ -30,7 +30,7 @@ int main() {
       boot();
     } else {
       Serial.println("Testing...");
-      // mainTest(input);
+      mainTest(input);
     }
   }
 
@@ -76,6 +76,11 @@ void processIncomingData() {
     } else if (data[0] == SPOKE_CMD_POWER_PRM_ON) {
       success = ac.powerOn();
     }
+  } else if (cmd == SPOKE_CMD_STATUS) {
+    DHT11_readSensor();
+    uint8_t reply[1] = { DHT11_humidity() };
+    NRF24_send(reply, 1);
+    success = true;
   }
 
   if (success) {
