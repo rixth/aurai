@@ -73,6 +73,102 @@ bool NRF24_dataAvailable() {
   return !(fifoStatus & NRF24_RX_EMPTY);
 }
 
+void NRF24_test(uint8_t input) {
+  if (input != 'c' && input != 's') {
+    Serial.print("\r\n -- Skipping radio test -- \r\n");
+    return;
+  }
+
+  // Shared setup
+  NRF24_init();
+  NRF24_configure();
+
+  NRF24_printStatus();
+  NRF24_printConfig();
+  NRF24_printAddresses();
+
+  uint8_t payload[1] = { 1 };
+
+  if (input == 'c') {
+    Serial.print("\r\n -- Radio test (client) -- \r\n");
+
+    // Client setup
+    NRF24_setRxAddr((uint8_t *)"clie1", 5);
+    NRF24_setTxAddr((uint8_t *)"serv1", 5);
+
+    // Client loop
+    while (!Serial.available()) {
+      Serial.print("TX ");
+      Serial.putb(++payload[0]);
+      Serial.print(":");
+
+      if (NRF24_send(payload, 1)) {
+        Serial.print(" sent. RX: ");
+      } else {
+        Serial.print(" failed. RX: ");
+      }
+
+      _delay_ms(10);
+
+      int i = 0;
+      while(!NRF24_dataAvailable()){
+        if (i++ > 1000) {
+          Serial.print("TIMEOUT\r\n");
+          break;
+        }
+        _delay_ms(1);
+      }
+
+      if (i < 1000) {
+        uint8_t data[1];
+        NRF24_read(NRF24_CMD_R_RX_PAYLOAD, data, 1);
+        Serial.putb(data[0]);
+        Serial.print("\r\n");
+        NRF24_write(NRF24_CMD_FLUSH_RX);
+      }
+
+      _delay_ms(1000);
+    }
+  } else if (input == 's') {
+    Serial.print("\r\n -- Radio test (server) -- \r\n");
+
+    // Server setup
+    NRF24_setRxAddr((uint8_t *)"serv1", 5);
+    NRF24_rxMode();
+    NRF24_setTxAddr((uint8_t *)"clie1", 5);
+
+    // Server loop
+    while (!Serial.available()) {
+      int i = 0;
+      while(1) {
+        if (NRF24_dataAvailable()) {
+          Serial.print("RX: ");
+          uint8_t data[1];
+          NRF24_read(NRF24_CMD_R_RX_PAYLOAD, data, 1);
+          Serial.putb(data[0]);
+          Serial.print(" TX: ");
+          Serial.putb(data[0]);
+
+          if (NRF24_send(data, 1)) {
+            Serial.print(" sent!\r\n");
+          } else {
+            Serial.print(" failed!\r\n");
+          }
+        } else {
+          if (i++ > 4000) {
+            Serial.print("Timeout waiting for client!\r\n");
+            break;
+          }
+          _delay_ms(1);
+        }
+      }
+    }
+  }
+
+  // Consume the char that was used to break the loop
+  Serial.read();
+}
+
 void NRF24_printConfig() {
   uint8_t config = NRF24_getRegister(NRF24_REG_CONFIG);
   uint8_t rfCh = NRF24_getRegister(NRF24_REG_RF_CH);

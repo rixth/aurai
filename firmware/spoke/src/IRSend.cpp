@@ -3,6 +3,7 @@
 #include <util/delay.h>
 #include <stdint.h>
 #include <IRSend.h>
+#include <Serial.h>
 #include <pins.h>
 
 void IRSend_init() {
@@ -54,3 +55,8 @@ void IRSend_send(uint32_t data, uint8_t len) {
   IRSend__off();
 }
 
+void IRSend_test() {
+  Serial.print("\r\n -- IR-LED TEST -- \r\n");
+  IRSend_send(0x8166817E, 32);
+  Serial.print("AC should have toggled power\r\n");
+}

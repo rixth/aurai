@@ -3,6 +3,7 @@
 #include <util/delay.h>
 
 #include "DHT11.h"
+#include "Serial.h"
 #include "pins.h"
 
 int8_t DHT11__temperature = 0;
@@ -94,4 +95,17 @@ int8_t DHT11__waitFor(bool waitFor) {
   }
 
   return (255 - loopCnt) * 2;
+}
+
+void DHT11_test() {
+  Serial.print("\r\n -- DHT-11 TEST -- \r\n");
+
+  uint8_t r = DHT11_readSensor();
+  Serial.print("Read result: ");
+  Serial.putb(r);
+  Serial.print(" Temp: ");
+  Serial.putb(DHT11_temperature());
+  Serial.print("C Humidity: ");
+  Serial.putb(DHT11_humidity());
+  Serial.print("%\r\n");
 }

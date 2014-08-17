@@ -168,6 +168,8 @@ void NRF24_rxMode();
 bool NRF24_send(const uint8_t* val, uint8_t len);
 bool NRF24_dataAvailable();
 
+void NRF24_test(uint8_t input);
+
 void NRF24_printConfig();
 void NRF24_printStatus();
 void NRF24_printFifoStatus();

@@ -23,5 +23,6 @@ void IRSend_init();
 void IRSend_send(uint32_t data, uint8_t len);
 void IRSend__on();
 void IRSend__off();
+void IRSend_test();
 
 #endif

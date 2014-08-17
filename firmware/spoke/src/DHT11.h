@@ -13,4 +13,6 @@ int8_t DHT11_temperature();
 double DHT11_dewPoint();
 int8_t DHT11__waitFor(bool waitFor);
 
+void DHT11_test();
+
 #endif

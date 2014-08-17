@@ -20,3 +20,4 @@ void EEPROM_write(uint32_t addr, uint8_t *bytes, uint16_t count);
 uint8_t EEPROM_read(uint32_t addr);
 void EEPROM_read(uint32_t addr, uint8_t *buf, uint16_t count);
 void EEPROM__loop_until_written();
+void EEPROM_test(uint8_t input);
