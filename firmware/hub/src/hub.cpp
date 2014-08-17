@@ -40,43 +40,110 @@ void boot() {
   NRF24_setTxAddr((uint8_t *)"spoke", 5);
   NRF24_setRxAddr((uint8_t *)"hub__", 5);
 
-  // Transmit a packet
-  Serial.print("Sending power toggle: ");
-  uint8_t payload[1] = { SPOKE_CMD_POWER_PRM_TOGGLE };
-  if (NRF24_send(payload, 1)) {
-    Serial.println("sent.");
-  } else {
-    Serial.println("failed.");
-  }
+  enterCommandLine();
+}
 
-  // Transmit another
-  Serial.print("Sending status request packet: ");
-  payload[0] = SPOKE_CMD_STATUS;
-  if (NRF24_send(payload, 1)) {
-    Serial.println("sent.");
-  } else {
-    Serial.println("failed.");
-  }
+void enterCommandLine() {
+  // P - power
+  //  T - toggle
+  //  1 - on
+  //  0 - off
+  // T - temp
+  //  U - up
+  //  D - down
+  //  E - exact
+  // M - mode
+  //  N - next (cycle)
+  //  E - energy saver
+  //  F - fan
+  //  D - dry
+  // F - fan speed
+  //  N - next (cycle)
+  //  L - low
+  //  M - medium
+  //  H - high
+  // S - status report
+  // X - exit
 
-  Serial.print("Waiting for report... ");
+  Serial.println("Aurai hub command line.");
 
-  NRF24_rxMode();
+  while (1) {
+    Serial.println("-- Select command:");
+    Serial.println("[P] Power control");
+    Serial.println("[T] Temperature settings");
+    Serial.println("[M] Mode control");
+    Serial.println("[F] Fan speed control");
+    Serial.println("[S] Get status from Spoke");
+    Serial.println("[X] Exit command line");
 
-  int i = 0;
-  while(!NRF24_dataAvailable()){
-    if (i++ > 1000) {
-      Serial.println(" timeout");
+    uint8_t cmd = Serial.read();
+
+    if (cmd == 'p') {
+      Serial.println(" [T] toggle");
+      Serial.println(" [0] power");
+      Serial.println(" [1] power");
+      cmd = Serial.read();
+      if (cmd == 't') {
+        Serial.print("Sending power toggle: ");
+        uint8_t payload[1] = { SPOKE_CMD_POWER_PRM_TOGGLE };
+        if (NRF24_send(payload, 1)) {
+          Serial.println("sent.");
+        } else {
+          Serial.println("failed.");
+        }
+      } else {
+        Serial.println("Unknown option.");
+      }
+    } else if (cmd == 't') {
+      Serial.println(" [U] target up");
+      Serial.println(" [D] target down");
+      Serial.println(" [E] set exact target");
+    } else if (cmd == 'm') {
+      Serial.println(" [N] next mode (cycle)");
+      Serial.println(" [C] cool");
+      Serial.println(" [E] energy saver");
+      Serial.println(" [D] dry");
+      Serial.println(" [F] fan only");
+    } else if (cmd == 'f') {
+      Serial.println(" [N] next fan speed (cycle)");
+      Serial.println(" [L] low");
+      Serial.println(" [M] medium");
+      Serial.println(" [H] high");
+    } else if (cmd == 's') {
+      Serial.print("Sending status request packet: ");
+      uint8_t payload[1] = { SPOKE_CMD_STATUS };
+      if (NRF24_send(payload, 1)) {
+        Serial.println("sent.");
+      } else {
+        Serial.println("failed.");
+      }
+
+      Serial.print("Waiting for report... ");
+
+      NRF24_rxMode();
+
+      int i = 0;
+      while(!NRF24_dataAvailable()){
+        if (i++ > 1000) {
+          Serial.println(" timeout");
+          return;
+        }
+        _delay_ms(1);
+      }
+
+      uint8_t data[1];
+      NRF24_fetch(data, 1);
+
+      Serial.print("Humidity: ");
+      Serial.putb(data[0]);
+      Serial.println("%");
+    } else if (cmd == 'x') {
+      Serial.println("Exiting...");
       return;
+    } else {
+      Serial.println("Unknown command.");
     }
-    _delay_ms(1);
   }
-
-  uint8_t data[1];
-  NRF24_fetch(data, 1);
-
-  Serial.print("Humidity: ");
-  Serial.putb(data[0]);
-  Serial.println("%");
 }
 
 void mainTest(uint8_t input) {
