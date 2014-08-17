@@ -7,6 +7,7 @@
 #include <DHT11.h>
 #include <IRSend.h>
 #include <NRF24L01.h>
+#include <EEPROM.h>
 
 #include <spoke.h>
 
@@ -28,5 +29,6 @@ void mainTest(uint8_t input) {
   NRF24_test(input);
   IRSend_test();
   DHT11_test();
+  EEPROM.test(input);
   DiagLEDS_test(input);
 }

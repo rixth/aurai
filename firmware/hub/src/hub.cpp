@@ -5,6 +5,7 @@
 #include <DiagLEDS.h>
 #include <Serial.h>
 #include <Flash.h>
+#include <EEPROM.h>
 #include <NRF24L01.h>
 
 #include <hub.h>
@@ -27,4 +28,5 @@ void mainTest(uint8_t input) {
   NRF24_test(input);
   Flash_test(input);
   DiagLEDS_test(input);
+  EEPROM.test(input);
 }
