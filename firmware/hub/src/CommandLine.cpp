@@ -178,8 +178,8 @@ void CommandLine_subcommandStatus() {
     _delay_ms(1);
   }
 
-  uint8_t data[5];
-  NRF24_fetch(data, 5);
+  uint8_t data[SPOKE_STATUS_LEN];
+  NRF24_fetch(data, SPOKE_STATUS_LEN);
 
   if (data[0] != SPOKE_RESP_STATUS) {
     Serial.println("Bad status response");
@@ -187,14 +187,14 @@ void CommandLine_subcommandStatus() {
   }
 
   Serial.print("Humidity: ");
-  Serial.putb(data[1]);
+  Serial.putb(data[SPOKE_STATUS_HUMIDITY_IDX]);
   Serial.println("%");
 
   Serial.print("Temperature: ");
-  Serial.putb(data[2]);
+  Serial.putb(data[SPOKE_STATUS_TEMPERATURE_IDX]);
   Serial.println("c");
 
-  uint16_t acStatus = (data[3] << 8) | data[4];
+  uint16_t acStatus = (data[SPOKE_STATUS_AC_MSB_IDX] << 8) | data[SPOKE_STATUS_AC_LSB_IDX];
 
   Serial.print("AC: ");
   Serial.println(AC_STATUS_ON(acStatus) ? "on" : "off");
