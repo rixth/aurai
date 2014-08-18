@@ -1,0 +1,22 @@
+{
+  "name": "aurai-interface",
+  "version": "0.0.0",
+  "description": "Interface for an Aurai AC controller",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/rixth/aurai.git"
+  },
+  "author": "Thomas Rix <thomas@trix.io>",
+  "license": "GPLv2",
+  "bugs": {
+    "url": "https://github.com/rixth/aurai/issues"
+  },
+  "homepage": "https://github.com/rixth/aurai",
+  "dependencies": {
+    "express": "^4.8.4"
+  }
+}
