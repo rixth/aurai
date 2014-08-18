@@ -9,6 +9,7 @@
 #include <NRF24L01.h>
 #include <SpokeCommands.h>
 #include "CommandLine.h"
+#include "SerialInterface.h"
 
 #include <hub.h>
 
@@ -22,9 +23,10 @@ int main() {
   while (1) {
     Serial.println("Aurai HUB.");
     Serial.println(" [C] Command line");
+    Serial.println(" [S] Binary serial interface");
     Serial.println(" [B] Boot");
     Serial.println(" [?] Enter test mode");
-    Serial.println("Will auto-boot in 3 seconds.");
+    Serial.print("Will auto-choose [S] in 3 seconds... ");
 
     uint8_t cmd;
 
@@ -38,17 +40,20 @@ int main() {
     };
 
     if (!cmd) {
-      Serial.print("Timeout! ");
-      cmd = 'b';
+      Serial.println(" timeout!");
+      cmd = 's';
     }
 
-    if (cmd == 'b') {
-      Serial.println("Booting...");
-      boot();
-    } else if (cmd == 'c') {
+    if (cmd == 'c') {
+      commonStart();
       CommandLine_start();
+    } else if (cmd == 's') {
+      commonStart();
+      SerialInterface_start();
+    } else if (cmd == 'b') {
+      commonStart();
+      boot();
     } else {
-      Serial.println("Testing...");
       mainTest(cmd);
     }
   }
@@ -57,6 +62,10 @@ int main() {
 }
 
 void boot() {
+  Serial.println("Self-hosted interface is not yet implemented.");
+}
+
+void commonStart() {
   initializeRadio();
 }
 
