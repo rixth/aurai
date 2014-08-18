@@ -166,7 +166,7 @@ void NRF24_setTxAddr(const uint8_t* data, uint8_t len);
 void NRF24_setRxAddr(const uint8_t* data, uint8_t len);
 void NRF24_rxMode();
 bool NRF24_send(const uint8_t* val, uint8_t len);
-void NRF24_fetch(uint8_t *buf, uint8_t len);
+int8_t NRF24_fetch(uint8_t *buf, uint8_t maxLen);
 bool NRF24_dataAvailable();
 void NRF24_flush();
 

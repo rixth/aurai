@@ -14,9 +14,9 @@ void NRF24_init() {
 
 void NRF24_configure() {
   NRF24_setRegister(NRF24_REG_RF_CH, 1);
-  NRF24_setRegister(NRF24_REG_RX_PW_P0, sizeof(uint8_t));
-  NRF24_setRegister(NRF24_REG_RX_PW_P1, sizeof(uint8_t));
   NRF24_setRegister(NRF24_REG_CONFIG, (NRF24_PWR_UP | NRF24_EN_CRC) & ~NRF24_CRCO);
+  NRF24_setRegister(NRF24_REG_DYNPD, NRF24_DPL_P0 | NRF24_DPL_P1);
+  NRF24_setRegister(NRF24_REG_FEATURE, NRF24_EN_DPL);
 }
 
 void NRF24_setTxAddr(const uint8_t* data, uint8_t len) {
@@ -63,10 +63,22 @@ bool NRF24_send(const uint8_t* val, uint8_t len) {
   }
 }
 
-void NRF24_fetch(uint8_t *buf, uint8_t len) {
+int8_t NRF24_fetch(uint8_t *buf, uint8_t maxLen) {
+  uint8_t len = NRF24_read(NRF24_CMD_R_RX_PL_WID);
+
+  // Datasheet says to flush rx if len > 32 b/c of corruption
+  if (len > 32) {
+    NRF24_write(NRF24_CMD_FLUSH_RX);
+    return -1;
+  } else if (len > maxLen) {
+    return -1;
+  }
+
   NRF24_read(NRF24_CMD_R_RX_PAYLOAD, buf, len);
   // Clear RX_DR bit by writing to it
   NRF24_setRegister(NRF24_REG_STATUS, NRF24_RX_DR);
+
+  return len;
 }
 
 bool NRF24_dataAvailable() {
