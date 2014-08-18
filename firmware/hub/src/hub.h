@@ -1,5 +1,5 @@
 #include <stdint.h>
 
 void boot();
-void enterCommandLine();
+void initializeRadio();
 void mainTest(uint8_t input);
