@@ -22,13 +22,13 @@ void AirConditioner::_sendCmd(unsigned long cmd) {
   IRSend_send(cmd, 32);
 }
 
-unsigned long AirConditioner::status() {
-  unsigned long st = 0;
+uint16_t AirConditioner::status() {
+  uint16_t st = 0;
 
-  st = (st | (unsigned long) _on);
-  st = (st << 2) | (unsigned long) _mode;
-  st = (st << 2) | (unsigned long) _fanSpeed;
-  st = (st << 8) | (unsigned long) _targetTemp;
+  st = (st | (uint16_t) _on);
+  st = (st << 2) | (uint16_t) _mode;
+  st = (st << 2) | (uint16_t) _fanSpeed;
+  st = (st << 8) | (uint16_t) _targetTemp;
 
   return st;
 }

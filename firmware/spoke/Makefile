@@ -39,6 +39,7 @@ CORE_LIB_CXX_SRC = \
 	$(SHAREDDIR)/DiagLEDS.cpp \
 	$(SHAREDDIR)/Serial.cpp \
 	$(SHAREDDIR)/SPI.cpp \
+  $(SHAREDDIR)/AirConditioner.cpp \
 	$(SHAREDDIR)/EEPROM.cpp \
 	$(SHAREDDIR)/NRF24L01.cpp \
 
