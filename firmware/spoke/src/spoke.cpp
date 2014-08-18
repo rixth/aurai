@@ -38,13 +38,7 @@ int main() {
 }
 
 void boot() {
-  // Configure radio
-  NRF24_flush();
-  NRF24_configure();
-  NRF24_setRxAddr((uint8_t *)"spoke", 5);
-  NRF24_setTxAddr((uint8_t *)"hub__", 5);
-  NRF24_rxMode();
-
+  initializeRadio();
   while (!Serial.available()) {
     if (NRF24_dataAvailable()) {
       processIncomingData();
@@ -52,6 +46,14 @@ void boot() {
     // TODO sleep here
   }
   Serial.read();
+}
+
+void initializeRadio() {
+  NRF24_flush();
+  NRF24_configure();
+  NRF24_setRxAddr((uint8_t *)"spoke", 5);
+  NRF24_setTxAddr((uint8_t *)"hub__", 5);
+  NRF24_rxMode();
 }
 
 void processIncomingData() {
