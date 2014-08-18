@@ -6,6 +6,7 @@
 #include <Serial.h>
 #include <NRF24L01.h>
 #include <SpokeCommands.h>
+#include <AirConditioner.h>
 
 void CommandLine_start() {
   initializeRadio();
@@ -177,12 +178,35 @@ void CommandLine_subcommandStatus() {
     _delay_ms(1);
   }
 
-  uint8_t data[1];
-  NRF24_fetch(data, 1);
+  uint8_t data[5];
+  NRF24_fetch(data, 5);
+
+  if (data[0] != SPOKE_RESP_STATUS) {
+    Serial.println("Bad status response");
+    return;
+  }
 
   Serial.print("Humidity: ");
-  Serial.putb(data[0]);
+  Serial.putb(data[1]);
   Serial.println("%");
+
+  Serial.print("Temperature: ");
+  Serial.putb(data[2]);
+  Serial.println("c");
+
+  uint16_t acStatus = (data[3] << 8) | data[4];
+
+  Serial.print("AC: ");
+  Serial.println(AC_STATUS_ON(acStatus) ? "on" : "off");
+  Serial.print("Mode: ");
+  Serial.putb(AC_STATUS_MODE(acStatus));
+  Serial.println("");
+  Serial.print("Fan speed: ");
+  Serial.putb(AC_STATUS_FAN(acStatus));
+  Serial.println("");
+  Serial.print("Temperature target: ");
+  Serial.putb(AC_STATUS_TEMP(acStatus));
+  Serial.println("");
 }
 
 void CommandLine__handleBasicCommand(uint8_t* payload, uint8_t len) {

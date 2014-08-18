@@ -25,3 +25,7 @@
 #define SPOKE_CMD_TEMPERATURE_EXACT (_BV(3) | _BV(5))
 
 #define SPOKE_CMD_STATUS (_BV(4) | _BV(5))
+
+#define SPOKE_RESP_OK     _BV(0)
+#define SPOKE_RESP_FAIL   _BV(1)
+#define SPOKE_RESP_STATUS _BV(2)

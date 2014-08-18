@@ -57,22 +57,28 @@ void initializeRadio() {
 }
 
 void processIncomingData() {
-  uint8_t data[1];
-  NRF24_fetch(data, 1);
+  uint8_t data[2];
+  uint8_t len = NRF24_fetch(data, 2);
 
   Serial.print("Received: ");
-  Serial.puth(data[0]);
+  uint8_t i;
+  for (i = 0; i < len; i++) {
+    Serial.puth(data[i]);
+    if (i != (len - 1)) {
+      Serial.print(" ");
+    }
+  }
   Serial.print("\r\n");
 
   // The first 5 bits are the command so shift the rest off
   uint8_t cmd = data[0] >> 3 << 3;
 
-  bool success;
+  bool success = true;
+  bool sendReply = true;
 
   if (cmd == SPOKE_CMD_POWER) {
     if (data[0] == SPOKE_CMD_POWER_PRM_TOGGLE) {
       ac.togglePower();
-      success = true;
     } else if (data[0] == SPOKE_CMD_POWER_PRM_OFF) {
       success = ac.powerOff();
     } else if (data[0] == SPOKE_CMD_POWER_PRM_ON) {
@@ -80,9 +86,25 @@ void processIncomingData() {
     }
   } else if (cmd == SPOKE_CMD_STATUS) {
     DHT11_readSensor();
-    uint8_t reply[1] = { DHT11_humidity() };
+    uint16_t acStatus = ac.status();
+    uint8_t reply[5] = { \
+      SPOKE_RESP_STATUS,
+      DHT11_humidity(),
+      (uint8_t) DHT11_temperature(),
+      (uint8_t) (acStatus >> 8),
+      (uint8_t)  (acStatus & 0xF)
+    };
+    NRF24_send(reply, 5);
+  }
+
+  if (sendReply) {
+    uint8_t reply[1];
+    if (success) {
+      reply[0] = SPOKE_RESP_OK;
+    } else {
+      reply[0] = SPOKE_RESP_FAIL;
+    }
     NRF24_send(reply, 1);
-    success = true;
   }
 
   if (success) {
