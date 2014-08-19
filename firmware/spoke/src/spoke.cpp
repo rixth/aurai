@@ -40,6 +40,8 @@ int main() {
 
     if (!cmd) {
       Serial.println(" timeout!");
+    } else {
+      Serial.println("");
     }
 
     if (cmd == 'b') {

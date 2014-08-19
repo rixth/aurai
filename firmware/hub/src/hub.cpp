@@ -41,6 +41,8 @@ int main() {
 
     if (!cmd) {
       Serial.println(" timeout!");
+    } else {
+      Serial.println("Booting!");
     }
 
     if (cmd == 'x') {
@@ -48,6 +50,7 @@ int main() {
       DiagLEDS_set(LED_YLW);
       CommandLine_start();
     } else if (cmd == 's') {
+      Serial.println("Starting Serial interface!");
       commonStart();
       DiagLEDS_set(LED_GRN);
       SerialInterface_start();

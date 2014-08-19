@@ -98,6 +98,7 @@ void CommandLine_subcommandTemperature() {
     Serial.print("Enter exact temperature desired [2 digits]: ");
     const char digits[2] = { Serial.read(), Serial.read() };
     uint8_t target = atoi(digits);
+    Serial.println("");
     Serial.print("Setting temperature to ");
     Serial.putb(target);
     Serial.print(": ");
@@ -210,6 +211,8 @@ void CommandLine_subcommandStatus() {
     }
     _delay_ms(1);
   }
+
+  Serial.println("");
 
   uint8_t data[SPOKE_STATUS_LEN];
   uint8_t len = NRF24_fetch(data, SPOKE_STATUS_LEN);
