@@ -55,7 +55,7 @@ int main() {
       commonStart();
       boot();
     } else {
-      mainTest(cmd);
+      // mainTest(cmd);
     }
   }
 

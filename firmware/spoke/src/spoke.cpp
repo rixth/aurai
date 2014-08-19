@@ -46,7 +46,7 @@ int main() {
       Serial.println("Booting!");
       boot();
     } else {
-      mainTest(cmd);
+      // mainTest(cmd);
     }
   }
 
