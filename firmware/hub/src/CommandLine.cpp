@@ -51,6 +51,7 @@ void CommandLine_start() {
 }
 
 void CommandLine_subcommandPower() {
+  Serial.println("");
   Serial.println("Choose subcommand:");
   Serial.println(" [T] toggle");
   Serial.println(" [0] power off");
@@ -163,7 +164,7 @@ void CommandLine_subcommandFanSpeed() {
     CommandLine__handleBasicCommand(payload, 1);
     CommandLine__waitForResponse();
   } else if (cmd == 'h') {
-    Serial.print("Setting fan speed to high");
+    Serial.print("Setting fan speed to high: ");
     uint8_t payload[1] = { SPOKE_CMD_FAN_SPEED_PRM_HIGH };
     CommandLine__handleBasicCommand(payload, 1);
     CommandLine__waitForResponse();
@@ -286,7 +287,7 @@ void CommandLine_subcommandEnvironment() {
   uint8_t len = NRF24_fetch(data, SPOKE_ENV_LEN);
 
   if (data[0] != SPOKE_RESP_ENV) {
-    Serial.print("Bad enrivonment status response. Got ");
+    Serial.print("Bad environment status response. Got ");
     Serial.putb(len);
     Serial.print(" bytes: ");
     for (i = 0; i < len; i++) {
