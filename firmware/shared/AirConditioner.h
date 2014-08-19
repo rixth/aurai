@@ -27,11 +27,10 @@
 
 #define AC_DEFAULT_STATE_ADDRESS 0x01
 
-#define AC_STATUS_ON(st)    (st & ((uint16_t) 1 << 12))
-#define AC_STATUS_OFF()     (!AC_STATUS_ON())
-#define AC_STATUS_MODE(st)  (st & ((uint16_t) 3 << 11))
-#define AC_STATUS_FAN(st)   (st & ((uint16_t) 3 << 9))
-#define AC_STATUS_TEMP(st)  (st & 0xff)
+#define AC_STATUS_ON(st)    (((uint16_t) st & ((uint16_t) 1 << 12)) >> 12)
+#define AC_STATUS_MODE(st)  (((uint16_t) st & ((uint16_t) 3 << 10)) >> 10)
+#define AC_STATUS_FAN(st)   (((uint16_t) st & ((uint16_t) 3 << 8)) >> 8)
+#define AC_STATUS_TEMP(st)  ((uint16_t) st & 0xff)
 
 class AirConditioner {
 public:
