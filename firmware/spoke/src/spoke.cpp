@@ -16,21 +16,38 @@
 AirConditioner ac;
 
 int main() {
-  // IRSend_init();
   Serial.begin();
   SPI.begin();
   DiagLEDS_init();
   NRF24_init();
 
   while (1) {
-    Serial.println("Aurai SPOKE. Press b to boot, any other key to test.");
-    uint8_t input = Serial.read();
-    if (input == 'b') {
-      Serial.println("Booting...");
+    Serial.println("Aurai SPOKE.");
+    Serial.println(" [B] Boot");
+    Serial.println(" [?] Enter test mode");
+    Serial.print("Will auto-choose [B] in 3 seconds... ");
+
+    uint8_t cmd;
+
+    uint16_t i = 0;
+    while (++i < 3000) {
+      if (Serial.available()) {
+        cmd = Serial.read();
+        break;
+      }
+      _delay_ms(1);
+    };
+
+    if (!cmd) {
+      Serial.println(" timeout!");
+      cmd = 'b';
+    }
+
+    if (cmd == 'b') {
+      Serial.println("Booting!");
       boot();
     } else {
-      Serial.println("Testing...");
-      mainTest(input);
+      mainTest(cmd);
     }
   }
 
