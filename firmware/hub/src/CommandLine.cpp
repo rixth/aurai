@@ -209,10 +209,17 @@ void CommandLine_subcommandStatus() {
   }
 
   uint8_t data[SPOKE_STATUS_LEN];
-  NRF24_fetch(data, SPOKE_STATUS_LEN);
+  uint8_t len = NRF24_fetch(data, SPOKE_STATUS_LEN);
 
   if (data[0] != SPOKE_RESP_STATUS) {
-    Serial.println("Bad status response");
+    Serial.print("Bad status response. Got ");
+    Serial.putb(len);
+    Serial.print(" bytes: ");
+    for (i = 0; i < len; i++) {
+      Serial.putb(data[i]);
+      Serial.print(" - ");
+    }
+    Serial.println("");
     return;
   }
 
