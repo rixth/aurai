@@ -60,6 +60,7 @@ void SerialInterface_pipeBufferToSpoke(uint8_t *buf, uint8_t len) {
     if (i++ > SERIAL_REPLY_TIMEOUT_MS) {
       Serial.print(SERIAL_RESP_TIMEOUT);
       DiagLEDS_set(LED_RED);
+      return;
     }
     _delay_ms(1);
   }
