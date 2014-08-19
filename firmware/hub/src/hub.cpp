@@ -22,11 +22,11 @@ int main() {
 
   while (1) {
     Serial.println("Aurai HUB.");
-    Serial.println(" [C] Command line");
+    Serial.println(" [X] Command line");
     Serial.println(" [S] Binary serial interface");
     Serial.println(" [B] Boot");
     Serial.println(" [?] Enter test mode");
-    Serial.print("Will auto-choose [S] in 3 seconds... ");
+    Serial.print("Will auto-choose [X] in 3 seconds... ");
 
     uint8_t cmd;
 
@@ -41,10 +41,10 @@ int main() {
 
     if (!cmd) {
       Serial.println(" timeout!");
-      cmd = 's';
+      cmd = 'x';
     }
 
-    if (cmd == 'c') {
+    if (cmd == 'x') {
       commonStart();
       CommandLine_start();
     } else if (cmd == 's') {
