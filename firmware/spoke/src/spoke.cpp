@@ -146,7 +146,7 @@ void processIncomingData() {
     uint8_t reply[SPOKE_STATUS_LEN] = { \
       SPOKE_RESP_STATUS,
       (uint8_t) (acStatus >> 8),
-      (uint8_t) (acStatus & 0xF)
+      (uint8_t) (acStatus & 0xFF)
     };
 
     Serial.print("Sending status: ");
