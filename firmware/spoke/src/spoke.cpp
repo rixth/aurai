@@ -27,7 +27,7 @@ int main() {
     Serial.println(" [?] Enter test mode");
     Serial.print("Will auto-choose [B] in 3 seconds... ");
 
-    uint8_t cmd;
+    uint8_t cmd = 'b';
 
     uint16_t i = 0;
     while (++i < 3000) {
@@ -40,7 +40,6 @@ int main() {
 
     if (!cmd) {
       Serial.println(" timeout!");
-      cmd = 'b';
     }
 
     if (cmd == 'b') {

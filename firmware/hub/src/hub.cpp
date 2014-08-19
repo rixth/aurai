@@ -26,9 +26,9 @@ int main() {
     Serial.println(" [S] Binary serial interface");
     Serial.println(" [B] Boot");
     Serial.println(" [?] Enter test mode");
-    Serial.print("Will auto-choose [X] in 3 seconds... ");
+    Serial.print("Will auto-choose [S] in 3 seconds... ");
 
-    uint8_t cmd;
+    uint8_t cmd = 's';
 
     uint16_t i = 0;
     while (++i < 3000) {
@@ -41,14 +41,15 @@ int main() {
 
     if (!cmd) {
       Serial.println(" timeout!");
-      cmd = 'x';
     }
 
     if (cmd == 'x') {
       commonStart();
+      DiagLEDS_set(LED_YLW);
       CommandLine_start();
     } else if (cmd == 's') {
       commonStart();
+      DiagLEDS_set(LED_GRN);
       SerialInterface_start();
     } else if (cmd == 'b') {
       commonStart();
