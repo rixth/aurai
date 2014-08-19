@@ -17,6 +17,7 @@ void NRF24_configure() {
   NRF24_setRegister(NRF24_REG_CONFIG, (NRF24_PWR_UP | NRF24_EN_CRC) & ~NRF24_CRCO);
   NRF24_setRegister(NRF24_REG_DYNPD, NRF24_DPL_P0 | NRF24_DPL_P1);
   NRF24_setRegister(NRF24_REG_FEATURE, NRF24_EN_DPL);
+  NRF24_setRegister(NRF24_REG_SETUP_RETR, 0xFF);
 }
 
 void NRF24_setTxAddr(const uint8_t* data, uint8_t len) {
