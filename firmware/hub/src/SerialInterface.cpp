@@ -35,7 +35,7 @@ void SerialInterface_start() {
       Serial.print(SERIAL_CMD_FAILED);
     }
 
-    Serial.println("");
+    Serial.print(0x0A);
   }
 }
 
