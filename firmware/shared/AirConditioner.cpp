@@ -111,10 +111,9 @@ bool AirConditioner::nextMode() {
 bool AirConditioner::setFanSpeed(uint8_t targetFanSpeed) {
   if (!_on ||
     _mode == AC_MODE_DRY ||
-    (targetFanSpeed != AC_MODE_COOL &&
-    targetFanSpeed != AC_MODE_ENERGY_SAVER &&
-    targetFanSpeed != AC_MODE_FAN &&
-    targetFanSpeed != AC_MODE_DRY)) {
+    (targetFanSpeed != AC_FAN_SPD_LOW &&
+    targetFanSpeed != AC_FAN_SPD_MED &&
+    targetFanSpeed != AC_FAN_SPD_HIGH)) {
     return false;
   }
 
