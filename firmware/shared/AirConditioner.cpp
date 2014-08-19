@@ -178,7 +178,7 @@ void AirConditioner::clearPowerTimer() {
 }
 
 bool AirConditioner::setPowerOnTimer(uint8_t hours) {
-  if (hours > 0 && hours > AC_TIMER_MAX_HOURS) {
+  if (hours > 0 && hours < AC_TIMER_MAX_HOURS) {
     return false;
   }
 
@@ -199,7 +199,7 @@ bool AirConditioner::setPowerOnTimer(uint8_t hours) {
 }
 
 bool AirConditioner::setPowerOffTimer(uint8_t hours) {
-  if (hours > 0 && hours > AC_TIMER_MAX_HOURS) {
+  if (hours > 0 && hours < AC_TIMER_MAX_HOURS) {
     return false;
   }
 
