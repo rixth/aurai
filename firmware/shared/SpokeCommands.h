@@ -24,6 +24,7 @@
 
 #define SPOKE_CMD_TEMPERATURE_EXACT (_BV(3) | _BV(5))
 
+#define SPOKE_CMD_RESET  (_BV(4) | _BV(6))
 #define SPOKE_CMD_STATUS (_BV(4) | _BV(5))
 
 #define SPOKE_STATUS_LEN             5

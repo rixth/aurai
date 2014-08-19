@@ -21,6 +21,7 @@ void CommandLine_start() {
     Serial.println("[M] Mode control");
     Serial.println("[F] Fan speed control");
     Serial.println("[S] Get status from Spoke");
+    Serial.println("[R] Reset AC state machine");
     Serial.println("[X] Exit command line");
 
     uint8_t cmd = Serial.read();
@@ -35,6 +36,8 @@ void CommandLine_start() {
       CommandLine_subcommandFanSpeed();
     } else if (cmd == 's') {
       CommandLine_subcommandStatus();
+    } else if (cmd == 'r') {
+      CommandLine_subcommandReset();
     } else if (cmd == 'x') {
       Serial.println("Exiting...");
       return;
@@ -158,6 +161,17 @@ void CommandLine_subcommandFanSpeed() {
   } else {
     Serial.println("Unknown fan speed.");
   }
+}
+
+void CommandLine_subcommandReset() {
+  Serial.print("Sending reset packet: ");
+  uint8_t payload[1] = { SPOKE_CMD_RESET };
+  CommandLine__handleBasicCommand(payload, 1);
+  Serial.println("Please reset the AC to:");
+  Serial.println(" - mode: cool");
+  Serial.println(" - temperature: 70");
+  Serial.println(" - fan speed: low");
+  Serial.println(" - turn the AC off");
 }
 
 void CommandLine_subcommandStatus() {
