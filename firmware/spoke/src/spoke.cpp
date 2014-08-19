@@ -57,7 +57,7 @@ int main() {
 void boot() {
   initializeRadio();
   ac.restoreStateFromMemory();
-  DiagLEDS(LED_GRN);
+  DiagLEDS_set(LED_GRN);
   while (!Serial.available()) {
     if (NRF24_dataAvailable()) {
       processIncomingData();

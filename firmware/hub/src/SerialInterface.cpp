@@ -4,6 +4,7 @@
 #include <util/delay.h>
 #include <stdlib.h>
 #include <Serial.h>
+#include <DiagLEDS.h>
 #include <NRF24L01.h>
 #include <SpokeCommands.h>
 #include <AirConditioner.h>
@@ -44,8 +45,10 @@ void SerialInterface_pipeBufferToSpoke(uint8_t *buf, uint8_t len) {
   // Worth noting that the transaction may go OK but the spoke data is SPOKE_RESP_FAIL
 
   if (NRF24_send(buf, len)) {
+    DiagLEDS_set(LED_GRN | LED_YLW);
     Serial.print(SERIAL_SEND_OK);
   } else {
+    DiagLEDS_set(LED_RED | LED_YLW);
     Serial.print(SERIAL_SEND_FAIL);
   }
 
@@ -56,12 +59,15 @@ void SerialInterface_pipeBufferToSpoke(uint8_t *buf, uint8_t len) {
   while(!NRF24_dataAvailable()){
     if (i++ > SERIAL_REPLY_TIMEOUT_MS) {
       Serial.print(SERIAL_RESP_TIMEOUT);
+      DiagLEDS_set(LED_RED);
     }
     _delay_ms(1);
   }
 
 
   if (NRF24_dataAvailable()) {
+    DiagLEDS_set(LED_GRN | LED_YLW | LED_RED);
+
     uint8_t data[5];
     uint8_t bytesReceived = NRF24_fetch(data, 5);
 
