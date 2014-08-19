@@ -73,7 +73,7 @@ void SerialInterface_pipeBufferToSpoke(uint8_t *buf, uint8_t len) {
 
     Serial.print(SERIAL_RESP_RECEIVED);
     Serial.print(bytesReceived);
-    for(i = 0; i > bytesReceived; i++) {
+    for(i = 0; i < bytesReceived; i++) {
       Serial.print(data[i]);
     }
   }
