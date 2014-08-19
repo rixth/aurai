@@ -174,15 +174,21 @@ void processIncomingData() {
   }
 
   if (sendReply) {
-    uint8_t reply[1];
+    uint16_t acStatus = ac.status();
+    uint8_t reply[SPOKE_STATUS_LEN] = { \
+      SPOKE_RESP_OK,
+      (uint8_t) (acStatus >> 8),
+      (uint8_t) (acStatus & 0xFF)
+    };
+
     if (success) {
       Serial.print("Sending success reply: ");
-      reply[0] = SPOKE_RESP_OK;
     } else {
       Serial.print("Sending failure reply: ");
       reply[0] = SPOKE_RESP_FAIL;
     }
-    if (NRF24_send(reply, 1)) {
+
+    if (NRF24_send(reply, SPOKE_STATUS_LEN)) {
       Serial.println("ok");
     } else {
       Serial.println("failed");
