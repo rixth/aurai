@@ -50,22 +50,25 @@ void CommandLine_start() {
 void CommandLine_subcommandPower() {
   Serial.println("Choose subcommand:");
   Serial.println(" [T] toggle");
-  Serial.println(" [0] power");
-  Serial.println(" [1] power");
+  Serial.println(" [0] power off");
+  Serial.println(" [1] power on");
   uint8_t cmd = Serial.read();
 
   if (cmd == 't') {
     Serial.print("Sending power toggle: ");
     uint8_t payload[1] = { SPOKE_CMD_POWER_PRM_TOGGLE };
     CommandLine__handleBasicCommand(payload, 1);
+    CommandLine__waitForResponse();
   } else if (cmd == '1') {
     Serial.print("Sending power on: ");
     uint8_t payload[1] = { SPOKE_CMD_POWER_PRM_ON };
     CommandLine__handleBasicCommand(payload, 1);
+    CommandLine__waitForResponse();
   } else if (cmd == '0') {
     Serial.print("Sending power off: ");
     uint8_t payload[1] = { SPOKE_CMD_POWER_PRM_OFF };
     CommandLine__handleBasicCommand(payload, 1);
+    CommandLine__waitForResponse();
   } else {
     Serial.println("Unknown option.");
   }
@@ -82,10 +85,12 @@ void CommandLine_subcommandTemperature() {
     Serial.print("Setting temperature up: ");
     uint8_t payload[1] = { SPOKE_CMD_TEMPERATURE_PRM_UP };
     CommandLine__handleBasicCommand(payload, 1);
+    CommandLine__waitForResponse();
   } else if (cmd == 'd') {
     Serial.print("Setting temperature down: ");
     uint8_t payload[1] = { SPOKE_CMD_TEMPERATURE_PRM_DOWN };
     CommandLine__handleBasicCommand(payload, 1);
+    CommandLine__waitForResponse();
   } else if (cmd == 'e') {
     Serial.print("Enter exact temperature desired [2 digits]: ");
     const char digits[2] = { Serial.read(), Serial.read() };
@@ -95,6 +100,7 @@ void CommandLine_subcommandTemperature() {
     Serial.print(": ");
     uint8_t payload[2] = { SPOKE_CMD_TEMPERATURE_EXACT, target };
     CommandLine__handleBasicCommand(payload, 2);
+    CommandLine__waitForResponse();
   } else {
     Serial.println("Unknown option.");
   }
@@ -113,22 +119,27 @@ void CommandLine_subcommandMode() {
     Serial.print("Setting next mode: ");
     uint8_t payload[1] = { SPOKE_CMD_MODE_PRM_NEXT };
     CommandLine__handleBasicCommand(payload, 1);
+    CommandLine__waitForResponse();
   } else if (cmd == 'c') {
     Serial.print("Setting mode to cool: ");
     uint8_t payload[1] = { SPOKE_CMD_MODE_PRM_COOL };
     CommandLine__handleBasicCommand(payload, 1);
+    CommandLine__waitForResponse();
   } else if (cmd == 'e') {
     Serial.print("Setting mode to energy saver: ");
     uint8_t payload[1] = { SPOKE_CMD_MODE_PRM_ENERGY_SAVER };
     CommandLine__handleBasicCommand(payload, 1);
+    CommandLine__waitForResponse();
   } else if (cmd == 'd') {
     Serial.print("Setting mode to dry: ");
     uint8_t payload[1] = { SPOKE_CMD_MODE_PRM_DRY };
     CommandLine__handleBasicCommand(payload, 1);
+    CommandLine__waitForResponse();
   } else if (cmd == 'f') {
     Serial.print("Setting mode to fan only: ");
     uint8_t payload[1] = { SPOKE_CMD_MODE_PRM_FAN };
     CommandLine__handleBasicCommand(payload, 1);
+    CommandLine__waitForResponse();
   } else {
     Serial.println("Unknown mode.");
   }
@@ -146,18 +157,22 @@ void CommandLine_subcommandFanSpeed() {
     Serial.print("Setting next fan speed: ");
     uint8_t payload[1] = { SPOKE_CMD_FAN_SPEED_PRM_NEXT };
     CommandLine__handleBasicCommand(payload, 1);
+    CommandLine__waitForResponse();
   } else if (cmd == 'h') {
     Serial.print("Setting fan speed to high");
     uint8_t payload[1] = { SPOKE_CMD_FAN_SPEED_PRM_HIGH };
     CommandLine__handleBasicCommand(payload, 1);
+    CommandLine__waitForResponse();
   } else if (cmd == 'm') {
     Serial.print("Setting fan speed to medium: ");
     uint8_t payload[1] = { SPOKE_CMD_FAN_SPEED_PRM_MED };
     CommandLine__handleBasicCommand(payload, 1);
+    CommandLine__waitForResponse();
   } else if (cmd == 'l') {
     Serial.print("Setting fan speed to to low: ");
     uint8_t payload[1] = { SPOKE_CMD_FAN_SPEED_PRM_LOW };
     CommandLine__handleBasicCommand(payload, 1);
+    CommandLine__waitForResponse();
   } else {
     Serial.println("Unknown fan speed.");
   }
@@ -167,6 +182,7 @@ void CommandLine_subcommandReset() {
   Serial.print("Sending reset packet: ");
   uint8_t payload[1] = { SPOKE_CMD_RESET };
   CommandLine__handleBasicCommand(payload, 1);
+  CommandLine__waitForResponse();
   Serial.println("Please reset the AC to:");
   Serial.println(" - mode: cool");
   Serial.println(" - temperature: 70");
@@ -228,5 +244,33 @@ void CommandLine__handleBasicCommand(uint8_t* payload, uint8_t len) {
     Serial.println("sent.");
   } else {
     Serial.println("failed.");
+  }
+}
+
+void CommandLine__waitForResponse() {
+  Serial.print("Waiting for response: ");
+
+  NRF24_rxMode();
+
+  int i = 0;
+  while(!NRF24_dataAvailable()){
+    if (i++ > 1000) {
+      Serial.println("timeout");
+      return;
+    }
+    _delay_ms(1);
+  }
+
+  uint8_t data[10];
+  NRF24_fetch(data, 10);
+
+  if (data[0] == SPOKE_RESP_OK) {
+    Serial.println("ok");
+  } else if (data[0] == SPOKE_RESP_FAIL) {
+    Serial.println("failed");
+  } else {
+    Serial.print("unknown reply: ");
+    Serial.puth(data[0]);
+    Serial.println("");
   }
 }

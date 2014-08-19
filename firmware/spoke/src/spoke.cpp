@@ -92,7 +92,7 @@ void processIncomingData() {
       DHT11_humidity(),
       (uint8_t) DHT11_temperature(),
       (uint8_t) (acStatus >> 8),
-      (uint8_t)  (acStatus & 0xF)
+      (uint8_t) (acStatus & 0xF)
     };
     NRF24_send(reply, 5);
   }
@@ -100,19 +100,22 @@ void processIncomingData() {
   if (sendReply) {
     uint8_t reply[1];
     if (success) {
+      Serial.print("Sending success reply: ");
       reply[0] = SPOKE_RESP_OK;
     } else {
+      Serial.print("Sending failure reply: ");
       reply[0] = SPOKE_RESP_FAIL;
     }
-    NRF24_send(reply, 1);
+    if (NRF24_send(reply, 1)) {
+      Serial.println("ok");
+    } else {
+      Serial.println("failed");
+    }
   }
 
-  if (success) {
-    DiagLEDS_set(LED_GRN);
-    Serial.println("Command succeeded.");
-  } else {
-    DiagLEDS_set(LED_RED);
-    Serial.println("Command failed?");
+  DiagLEDS_set(success ? LED_GRN : LED_RED);
+  if (!sendReply) {
+    Serial.println(success ? "Command succeeded." : "Command failed.");
   }
 }
 
