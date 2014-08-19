@@ -56,9 +56,12 @@ int main() {
 
 void boot() {
   initializeRadio();
+  ac.restoreStateFromMemory();
+  DiagLEDS(LED_GRN);
   while (!Serial.available()) {
     if (NRF24_dataAvailable()) {
       processIncomingData();
+      ac.saveStateToMemory();
     }
     // TODO sleep here
   }
