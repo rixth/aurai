@@ -7,36 +7,23 @@
   <link rel="stylesheet" href="/style.css">
   <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 </head>
-<body>
+<body class="">
   <div class="row">
     <h1>aurai</h1>
   </div>
   <div class="container">
     <div class="row core-metrics">
       <div class="third">
-        <div class="number">
-          <span id="env-humidity">00</span>%
-        </div>
-        <div class="desc">
-          Humidity
-        </div>
+        <div class="number" id="env-humidity">--</div>
+        <div class="desc">Humidity</div>
       </div>
       <div class="third">
-        <div class="number">
-          <span id="env-temp">00</span>&deg;F
-          <!-- <i class="fa fa-arrow-down fa-1x falling"></i> -->
-        </div>
-        <div class="desc">
-          Temperature
-        </div>
+        <div class="number" id="env-temp">--</div>
+        <div class="desc">Temperature</div>
       </div>
       <div class="third">
-        <div class="number">
-          <span id="env-dewpoint">00</span>F
-        </div>
-        <div class="desc">
-          Dewpoint
-        </div>
+        <div class="number" id="env-dewpoint">--</div>
+        <div class="desc">Dewpoint</div>
       </div>
     </div>
     <div class="divider"></div>
@@ -52,43 +39,45 @@
         </div>
       </button>
     </div>
-    <div class="divider"></div>
-    <div class="row">
-      <div class="half mode" data-cmd="mode/next">
-        <div class="icon">
-          <i class="fa fa-wrench fa-3x"></i>
+    <div class="main-controls">
+      <div class="divider"></div>
+      <div class="row">
+        <div class="half mode" data-cmd="mode/next">
+          <div class="icon">
+            <i class="fa fa-wrench fa-3x"></i>
+          </div>
+          <div class="desc">
+            Mode: energy saver
+          </div>
         </div>
-        <div class="desc">
-          Mode: energy saver
-        </div>
-      </div>
-      <div class="half fan-speed" data-cmd="fan-speed/next">
-        <div class="icon">
-          <i class="fa fa-tachometer fa-3x"></i>
-        </div>
-        <div class="desc">
-          Fan speed: low
-        </div>
-      </div>
-    </div>
-    <div class="divider"></div>
-    <div class="row">
-      <div class="third target-temp-up" data-cmd="temp/down">
-        <div class="icon">
-          <i class="fa fa-toggle-down fa-3x"></i>
+        <div class="half fan-speed" data-cmd="fan-speed/next">
+          <div class="icon">
+            <i class="fa fa-tachometer fa-3x"></i>
+          </div>
+          <div class="desc">
+            Fan speed: low
+          </div>
         </div>
       </div>
-      <div class="third">
-        <div class="number">
-          <span id="target-temp">26</span>&deg;F
+      <div class="divider"></div>
+      <div class="row target-temp">
+        <div class="third target-temp-up" data-cmd="temp/down">
+          <div class="icon">
+            <i class="fa fa-toggle-down fa-3x"></i>
+          </div>
         </div>
-        <div class="desc">
-          Target temperature
+        <div class="third">
+          <div class="number">
+            <span id="target-temp">26</span>&deg;F
+          </div>
+          <div class="desc">
+            Target temperature
+          </div>
         </div>
-      </div>
-      <div class="third target-temp-down" data-cmd="temp/up">
-        <div class="icon">
-          <i class="fa fa-toggle-up fa-3x"></i>
+        <div class="third target-temp-down" data-cmd="temp/up">
+          <div class="icon">
+            <i class="fa fa-toggle-up fa-3x"></i>
+          </div>
         </div>
       </div>
     </div>

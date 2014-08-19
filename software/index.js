@@ -17,7 +17,7 @@ app.get('/cmd/temp/exact/:target', function (req, res) {
   ac.tempExact(parseInt(req.params.target, 10), function (success) {
     res.send(JSON.stringify({
       success: success,
-      status: ac.status()
+      result: ac.status()
     }));
   });
 });
@@ -53,7 +53,7 @@ function sendCmd(cmd, req, res) {
   args.push(function (success) {
     res.send(JSON.stringify({
       success: success,
-      status: ac.status()
+      result: ac.status()
     }));
   });
 

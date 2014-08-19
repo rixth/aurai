@@ -101,6 +101,14 @@ h1 {
   -webkit-animation: rising 1s infinite;
 }
 
+.no-fan-speed .fan-speed {
+  opacity: 0.3;
+}
+
+.no-temp-target .target-temp {
+  opacity: 0.3;
+}
+
 .number {
   font-size: 26px;
 }
@@ -124,6 +132,17 @@ h1 {
 .mode:hover .icon,
 .fan-speed:hover .icon {
   color: #666;
+}
+
+.power-off .main-controls,
+.power-on .main-controls {
+  max-height: 0;
+  overflow-y: hidden;
+  transition: max-height 0.25s ease-in-out;
+}
+
+.power-on .main-controls {
+  max-height: 296px;
 }
 
 
