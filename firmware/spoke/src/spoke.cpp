@@ -93,17 +93,53 @@ void processIncomingData() {
   // The first 5 bits are the command so shift the rest off
   uint8_t cmd = data[0] >> 3 << 3;
 
-  bool success = true;
+  bool success = false;
   bool sendReply = true;
 
   if (cmd == SPOKE_CMD_POWER) {
     if (data[0] == SPOKE_CMD_POWER_PRM_TOGGLE) {
       ac.togglePower();
+      success = true;
     } else if (data[0] == SPOKE_CMD_POWER_PRM_OFF) {
       success = ac.powerOff();
     } else if (data[0] == SPOKE_CMD_POWER_PRM_ON) {
       success = ac.powerOn();
     }
+  } else if (cmd == SPOKE_CMD_TEMPERATURE) {
+    if (data[0] == SPOKE_CMD_TEMPERATURE_PRM_UP) {
+      success = ac.targetTempUp();
+    } else if (data[0] == SPOKE_CMD_TEMPERATURE_PRM_DOWN) {
+      success = ac.targetTempDown();
+    }
+  } else if (cmd == SPOKE_CMD_TEMPERATURE_EXACT) {
+    if (len == 2) {
+      success = ac.setTargetTemp(data[1]);
+    }
+  } else if (cmd == SPOKE_CMD_FAN_SPEED) {
+    if (data[0] == SPOKE_CMD_FAN_SPEED_PRM_NEXT) {
+      success = ac.nextFanSpeed();
+    } else if (data[0] == SPOKE_CMD_FAN_SPEED_PRM_LOW) {
+      success = ac.setFanSpeed(AC_FAN_SPD_LOW);
+    } else if (data[0] == SPOKE_CMD_FAN_SPEED_PRM_MED) {
+      success = ac.setFanSpeed(AC_FAN_SPD_MED);
+    } else if (data[0] == SPOKE_CMD_FAN_SPEED_PRM_HIGH) {
+      success = ac.setFanSpeed(AC_FAN_SPD_HIGH);
+    }
+  } else if (cmd == SPOKE_CMD_MODE) {
+    if (data[0] == SPOKE_CMD_MODE_PRM_NEXT) {
+      success = ac.nextMode();
+    } else if (data[0] == SPOKE_CMD_MODE_PRM_COOL) {
+      success = ac.setMode(AC_MODE_COOL);
+    } else if (data[0] == SPOKE_CMD_MODE_PRM_ENERGY_SAVER) {
+      success = ac.setMode(AC_MODE_ENERGY_SAVER);
+    } else if (data[0] == SPOKE_CMD_MODE_PRM_DRY) {
+      success = ac.setMode(AC_MODE_DRY);
+    } else if (data[0] == SPOKE_CMD_MODE_PRM_FAN) {
+      success = ac.setMode(AC_MODE_FAN);
+    }
+  } else if (cmd == SPOKE_CMD_RESET) {
+    ac.reset();
+    success = true;
   } else if (cmd == SPOKE_CMD_STATUS) {
     DHT11_readSensor();
     uint16_t acStatus = ac.status();
@@ -114,7 +150,14 @@ void processIncomingData() {
       (uint8_t) (acStatus >> 8),
       (uint8_t) (acStatus & 0xF)
     };
-    NRF24_send(reply, 5);
+
+    Serial.print("Sending status: ");
+    if (NRF24_send(reply, 5)) {
+      Serial.println("ok");
+    } else {
+      Serial.println("failed");
+    }
+    success = true;
   }
 
   if (sendReply) {
