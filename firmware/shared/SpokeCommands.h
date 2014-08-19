@@ -26,13 +26,17 @@
 
 #define SPOKE_CMD_RESET  (_BV(4) | _BV(6)) // 0x50
 #define SPOKE_CMD_STATUS (_BV(4) | _BV(5)) // 0x30
+#define SPOKE_CMD_ENV    (_BV(3) | _BV(6)) // 0x48
 
-#define SPOKE_STATUS_LEN             5
-#define SPOKE_STATUS_HUMIDITY_IDX    1
-#define SPOKE_STATUS_TEMPERATURE_IDX 2
-#define SPOKE_STATUS_AC_MSB_IDX      3
-#define SPOKE_STATUS_AC_LSB_IDX      4
+#define SPOKE_STATUS_LEN             3
+#define SPOKE_STATUS_AC_MSB_IDX      1
+#define SPOKE_STATUS_AC_LSB_IDX      2
+
+#define SPOKE_ENV_LEN             3
+#define SPOKE_ENV_HUMIDITY_IDX    1
+#define SPOKE_ENV_TEMPERATURE_IDX 2
 
 #define SPOKE_RESP_OK     _BV(0) // 0x1
 #define SPOKE_RESP_FAIL   _BV(1) // 0x2
 #define SPOKE_RESP_STATUS _BV(2) // 0x4
+#define SPOKE_RESP_ENV    _BV(3) // 0x8

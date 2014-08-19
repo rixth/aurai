@@ -5,5 +5,6 @@ void CommandLine_subcommandMode();
 void CommandLine_subcommandFanSpeed();
 void CommandLine_subcommandReset();
 void CommandLine_subcommandStatus();
+void CommandLine_subcommandEnvironment();
 void CommandLine__handleBasicCommand(uint8_t* payload, uint8_t len);
 void CommandLine__waitForResponse();

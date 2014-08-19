@@ -21,6 +21,7 @@ void CommandLine_start() {
     Serial.println("[M] Mode control");
     Serial.println("[F] Fan speed control");
     Serial.println("[S] Get status from Spoke");
+    Serial.println("[E] Get environment report from Spoke");
     Serial.println("[R] Reset AC state machine");
     Serial.println("[X] Exit command line");
 
@@ -36,6 +37,8 @@ void CommandLine_start() {
       CommandLine_subcommandFanSpeed();
     } else if (cmd == 's') {
       CommandLine_subcommandStatus();
+    } else if (cmd == 'e') {
+      CommandLine_subcommandEnvironment();
     } else if (cmd == 'r') {
       CommandLine_subcommandReset();
     } else if (cmd == 'x') {
@@ -223,14 +226,6 @@ void CommandLine_subcommandStatus() {
     return;
   }
 
-  Serial.print("Humidity: ");
-  Serial.putb(data[SPOKE_STATUS_HUMIDITY_IDX]);
-  Serial.println("%");
-
-  Serial.print("Temperature: ");
-  Serial.putb(data[SPOKE_STATUS_TEMPERATURE_IDX]);
-  Serial.println("c");
-
   uint16_t acStatus = (data[SPOKE_STATUS_AC_MSB_IDX] << 8) | data[SPOKE_STATUS_AC_LSB_IDX];
 
   Serial.print("AC: ");
@@ -262,6 +257,50 @@ void CommandLine_subcommandStatus() {
   Serial.print("Temperature target: ");
   Serial.putb(AC_STATUS_TEMP(acStatus));
   Serial.println("");
+}
+
+void CommandLine_subcommandEnvironment() {
+  Serial.print("Sending environment status request packet: ");
+  uint8_t payload[1] = { SPOKE_CMD_ENV };
+  CommandLine__handleBasicCommand(payload, 1);
+
+  Serial.print("Waiting for report... ");
+
+  NRF24_rxMode();
+
+  int i = 0;
+  while(!NRF24_dataAvailable()){
+    if (i++ > 1000) {
+      Serial.println(" timeout");
+      return;
+    }
+    _delay_ms(1);
+  }
+
+  Serial.println("");
+
+  uint8_t data[SPOKE_ENV_LEN];
+  uint8_t len = NRF24_fetch(data, SPOKE_ENV_LEN);
+
+  if (data[0] != SPOKE_RESP_ENV) {
+    Serial.print("Bad enrivonment status response. Got ");
+    Serial.putb(len);
+    Serial.print(" bytes: ");
+    for (i = 0; i < len; i++) {
+      Serial.putb(data[i]);
+      Serial.print(" - ");
+    }
+    Serial.println("");
+    return;
+  }
+
+  Serial.print("Humidity: ");
+  Serial.putb(data[SPOKE_ENV_HUMIDITY_IDX]);
+  Serial.println("%");
+
+  Serial.print("Temperature: ");
+  Serial.putb(data[SPOKE_ENV_TEMPERATURE_IDX]);
+  Serial.println("c");
 }
 
 void CommandLine__handleBasicCommand(uint8_t* payload, uint8_t len) {

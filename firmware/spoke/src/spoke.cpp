@@ -140,18 +140,30 @@ void processIncomingData() {
     ac.reset();
     success = true;
   } else if (cmd == SPOKE_CMD_STATUS) {
-    DHT11_readSensor();
     uint16_t acStatus = ac.status();
-    uint8_t reply[5] = { \
+    uint8_t reply[SPOKE_STATUS_LEN] = { \
       SPOKE_RESP_STATUS,
-      DHT11_humidity(),
-      (uint8_t) DHT11_temperature(),
       (uint8_t) (acStatus >> 8),
       (uint8_t) (acStatus & 0xF)
     };
 
     Serial.print("Sending status: ");
-    if (NRF24_send(reply, 5)) {
+    if (NRF24_send(reply, SPOKE_STATUS_LEN)) {
+      Serial.println("ok");
+    } else {
+      Serial.println("failed");
+    }
+    success = true;
+  } else if (cmd == SPOKE_CMD_ENV) {
+    DHT11_readSensor();
+    uint8_t reply[SPOKE_ENV_LEN] = { \
+      SPOKE_RESP_ENV,
+      DHT11_humidity(),
+      (uint8_t) DHT11_temperature(),
+    };
+
+    Serial.print("Sending environment: ");
+    if (NRF24_send(reply, SPOKE_ENV_LEN)) {
       Serial.println("ok");
     } else {
       Serial.println("failed");
