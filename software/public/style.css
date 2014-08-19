@@ -14,7 +14,6 @@ button {
   margin: 0;
 }
 
-
 .container {
   background: #f6f6f6;
   border: 1px solid #d6d6d6;
@@ -52,6 +51,14 @@ h1 {
 
 .power {
   text-align: center;
+}
+
+.power.off .desc-on {
+  display: none;
+}
+
+.power.on .desc-off {
+  display: none;
 }
 
 .icon {

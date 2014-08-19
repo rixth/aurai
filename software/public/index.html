@@ -6,8 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
   <link rel="stylesheet" href="/style.css">
   <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
-  <script src="/app.js"></script>
-  <script src="/dew.js"></script>
 </head>
 <body>
   <div class="row">
@@ -17,7 +15,7 @@
     <div class="row core-metrics">
       <div class="third">
         <div class="number">
-          <span class="count">37</span>%
+          <span id="env-humidity">00</span>%
         </div>
         <div class="desc">
           Humidity
@@ -25,8 +23,8 @@
       </div>
       <div class="third">
         <div class="number">
-          <span class="count">26</span>&deg;C
-          <i class="fa fa-arrow-down fa-1x falling"></i>
+          <span id="env-temp">00</span>&deg;F
+          <!-- <i class="fa fa-arrow-down fa-1x falling"></i> -->
         </div>
         <div class="desc">
           Temperature
@@ -34,7 +32,7 @@
       </div>
       <div class="third">
         <div class="number">
-          <span class="count">37</span>%
+          <span id="env-dewpoint">00</span>F
         </div>
         <div class="desc">
           Dewpoint
@@ -42,18 +40,21 @@
       </div>
     </div>
     <div class="divider"></div>
-    <div class="row power empty on">
+    <div class="row power empty on" data-cmd="power/toggle">
         <div class="icon">
           <i class="fa fa-power-off fa-3x"></i>
         </div>
-        <div class="desc">
+        <div class="desc desc-on">
           AC is currently on. Tap to turn off.
+        </div>
+        <div class="desc desc-off">
+          AC is currently off. Tap to turn on.
         </div>
       </button>
     </div>
     <div class="divider"></div>
     <div class="row">
-      <div class="half mode">
+      <div class="half mode" data-cmd="mode/next">
         <div class="icon">
           <i class="fa fa-wrench fa-3x"></i>
         </div>
@@ -61,7 +62,7 @@
           Mode: energy saver
         </div>
       </div>
-      <div class="half fan-speed">
+      <div class="half fan-speed" data-cmd="fan-speed/next">
         <div class="icon">
           <i class="fa fa-tachometer fa-3x"></i>
         </div>
@@ -72,25 +73,29 @@
     </div>
     <div class="divider"></div>
     <div class="row">
-      <div class="third target-temp-up">
+      <div class="third target-temp-up" data-cmd="temp/down">
         <div class="icon">
           <i class="fa fa-toggle-down fa-3x"></i>
         </div>
       </div>
       <div class="third">
         <div class="number">
-          <span class="count">26</span>&deg;C
+          <span id="target-temp">26</span>&deg;F
         </div>
         <div class="desc">
           Target temperature
         </div>
       </div>
-      <div class="third target-temp-down">
+      <div class="third target-temp-down" data-cmd="temp/up">
         <div class="icon">
           <i class="fa fa-toggle-up fa-3x"></i>
         </div>
       </div>
     </div>
   </div>
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="/dew.js"></script>
+  <script src="/app.js"></script>
 </body>
 </html>
