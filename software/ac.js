@@ -187,10 +187,12 @@ AC.prototype._sendCmd = function (bits, cb) {
 
   console.log('Writing', buf, 'to serial port');
 
-  this.serialPort.write(buf, function (_err) {
-    if (_err && this.lastCallback) {
-      this.lastCallback(_err);
-    }
+  this.serialPort.write(buf, function () {
+    this.serialPort.drain(function (_err) {
+      if (_err && this.lastCallback) {
+        this.lastCallback(_err);
+      }
+    }.bind(this));
   }.bind(this));
 }
 
