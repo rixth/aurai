@@ -86,7 +86,7 @@ $(TARGET).eep: $(TARGET).elf
 
 $(TARGET).hex: $(TARGET).eep
 	 avr-objcopy -O ihex -R .eeprom $(TARGET).elf $(TARGET).hex
-	 avr-size $(TARGET).hex
+	 avr-size --mcu=$(BUILD_MCU) -C -x $(TARGET).elf
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.c
 	@mkdir -p $(BUILDDIR)
