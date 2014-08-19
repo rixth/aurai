@@ -229,11 +229,29 @@ void CommandLine_subcommandStatus() {
   Serial.print("AC: ");
   Serial.println(AC_STATUS_ON(acStatus) ? "on" : "off");
   Serial.print("Mode: ");
-  Serial.putb(AC_STATUS_MODE(acStatus));
-  Serial.println("");
+  if (AC_STATUS_MODE(acStatus) == AC_MODE_COOL) {
+    Serial.println("cool");
+  } else if (AC_STATUS_MODE(acStatus) == AC_MODE_ENERGY_SAVER) {
+    Serial.println("energy saver");
+  } else if (AC_STATUS_MODE(acStatus) == AC_MODE_FAN) {
+    Serial.println("fan only");
+  } else if (AC_STATUS_MODE(acStatus) == AC_MODE_DRY) {
+    Serial.println("dry");
+  } else {
+    Serial.println("unknown");
+  }
+
   Serial.print("Fan speed: ");
-  Serial.putb(AC_STATUS_FAN(acStatus));
-  Serial.println("");
+  if (AC_STATUS_FAN(acStatus) == AC_FAN_SPD_LOW) {
+    Serial.println("low");
+  } else if (AC_STATUS_FAN(acStatus) == AC_FAN_SPD_MED) {
+    Serial.println("medium");
+  } else if (AC_STATUS_FAN(acStatus) == AC_FAN_SPD_HIGH) {
+    Serial.println("high");
+  } else {
+    Serial.println("unknown");
+  }
+
   Serial.print("Temperature target: ");
   Serial.putb(AC_STATUS_TEMP(acStatus));
   Serial.println("");
