@@ -1,6 +1,6 @@
 #define SERIAL_BUFFER_LENTH 11
 
-#define SERIAL_REPLY_TIMEOUT_MS 500
+#define SERIAL_REPLY_TIMEOUT_MS 1000
 
 // These come from the serial interface command processing
 #define SERIAL_CMD_PIPE     0x01
