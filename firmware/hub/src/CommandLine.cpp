@@ -1,5 +1,6 @@
 #include "hub.h"
 #include "CommandLine.h"
+#include "EnvironmentalLogger.h"
 
 #include <util/delay.h>
 #include <stdlib.h>
@@ -23,6 +24,7 @@ void CommandLine_start() {
     Serial.println("[S] Get status from Spoke");
     Serial.println("[E] Get environment report from Spoke");
     Serial.println("[R] Reset AC state machine");
+    Serial.println("[D] Dump enviromental log");
     Serial.println("[X] Exit command line");
 
     uint8_t cmd = Serial.read();
@@ -41,6 +43,8 @@ void CommandLine_start() {
       CommandLine_subcommandEnvironment();
     } else if (cmd == 'r') {
       CommandLine_subcommandReset();
+    } else if (cmd == 'd') {
+      CommandLine_subcommandDumpLog();
     } else if (cmd == 'x') {
       Serial.println("Exiting...");
       return;
@@ -181,6 +185,24 @@ void CommandLine_subcommandFanSpeed() {
   } else {
     Serial.println("Unknown fan speed.");
   }
+}
+
+void CommandLine_subcommandDumpLog() {
+  Serial.println("Starting logger");
+  EnvironmentalLogging_start();
+  uint8_t data[EL_TOTAL_DATA_LENGTH];
+  Serial.println("Getting log data");
+  EnvironmentalLogging_readLog(data, EL_TOTAL_DATA_LENGTH);
+  Serial.println("Got logger data");
+  uint16_t i;
+  for (i = 0; i < EL_TOTAL_DATA_LENGTH; i += 2) {
+    Serial.print("H: ");
+    Serial.putb(data[i]);
+    Serial.print("% T: ");
+    Serial.putb(data[i + 1]);
+    Serial.println("C");
+  }
+  Serial.println("Done");
 }
 
 void CommandLine_subcommandReset() {
