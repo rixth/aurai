@@ -35,7 +35,7 @@ void SerialInterface_start() {
   } else if (cmd == SERIAL_CMD_ENV_LOG) {
     Serial.print(SERIAL_CMD_OK);
     Serial.print(SERIAL_SEND_OK);
-    Serial.print(SERIAL_RESP_ENV_LOG);
+    Serial.print(SERIAL_RESP_RECEIVED);
     Serial.print(buf[0]);
     uint8_t data[255];
     EnvironmentalLogging_readLog(data, buf[0]);
