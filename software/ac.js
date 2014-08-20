@@ -12,6 +12,7 @@ function AC(serialPort) {
   this.resetTimer;
   this.serialPortPath = serialPort;
   // this.firePortCycleTimer();
+  this.queue = [];
 
   this.serialPort = new SerialPort.SerialPort(this.serialPortPath, {
     baudrate: 9600,
@@ -165,6 +166,10 @@ AC.prototype.setMode = function (mode, cb) {
 };
 
 AC.prototype._sendCmd = function (bits, cb) {
+  if (this.lastCallback) {
+    return this.queue.push(arguments);
+  }
+
   var buf;
 
   if (Buffer.isBuffer(bits)) {
@@ -183,7 +188,12 @@ AC.prototype._sendCmd = function (bits, cb) {
     throw new Error("don't know what to do with " + bits);
   }
 
-  this.lastCallback = cb;
+  this.lastCallback = function () {
+    cb.apply(this, arguments);
+    if (this.queue.length) {
+      this._sendCmd.apply(this, this.queue.unshift());
+    }
+  }.bind(this);
 
   console.log('Writing', buf, 'to serial port');
 
