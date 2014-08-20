@@ -78,6 +78,7 @@ int main() {
 
 void boot() {
   while(1) {
+    EnvironmentalLogging_logIfNeeded(secondsSinceBoot);
     SerialInterface_start();
   }
 }
@@ -90,6 +91,7 @@ void timerInit() {
 }
 
 void commonStart() {
+  EnvironmentalLogging_start();
   timerInit();
   initializeRadio();
 }
