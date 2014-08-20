@@ -3,6 +3,7 @@
 #include "EnvironmentalLogger.h"
 
 #include <util/delay.h>
+#include <avr/pgmspace.h>
 #include <stdlib.h>
 #include <Serial.h>
 #include <NRF24L01.h>
@@ -12,20 +13,20 @@
 void CommandLine_start() {
   initializeRadio();
 
-  Serial.println("Aurai hub command line.");
+  Serial.println(PSTR("Aurai hub command line."));
 
   while (1) {
-    Serial.println("Select command:");
-    Serial.println("");
-    Serial.println("[P] Power control");
-    Serial.println("[T] Temperature settings");
-    Serial.println("[M] Mode control");
-    Serial.println("[F] Fan speed control");
-    Serial.println("[S] Get status from Spoke");
-    Serial.println("[E] Get environment report from Spoke");
-    Serial.println("[R] Reset AC state machine");
-    Serial.println("[D] Dump enviromental log");
-    Serial.println("[X] Exit command line");
+    Serial.println(PSTR("Select command:"));
+    Serial.println(PSTR(""));
+    Serial.println(PSTR("[P] Power control"));
+    Serial.println(PSTR("[T] Temperature settings"));
+    Serial.println(PSTR("[M] Mode control"));
+    Serial.println(PSTR("[F] Fan speed control"));
+    Serial.println(PSTR("[S] Get status from Spoke"));
+    Serial.println(PSTR("[E] Get environment report from Spoke"));
+    Serial.println(PSTR("[R] Reset AC state machine"));
+    Serial.println(PSTR("[D] Dump enviromental log"));
+    Serial.println(PSTR("[X] Exit command line"));
 
     uint8_t cmd = Serial.read();
 
@@ -46,20 +47,20 @@ void CommandLine_start() {
     } else if (cmd == 'd') {
       CommandLine_subcommandDumpLog();
     } else if (cmd == 'x') {
-      Serial.println("Exiting...");
+      Serial.println(PSTR("Exiting..."));
       return;
     } else {
-      Serial.println("Unknown command.");
+      Serial.println(PSTR("Unknown command."));
     }
   }
 }
 
 void CommandLine_subcommandPower() {
-  Serial.println("");
-  Serial.println("Choose subcommand:");
-  Serial.println(" [T] toggle");
-  Serial.println(" [0] power off");
-  Serial.println(" [1] power on");
+  Serial.println(PSTR(""));
+  Serial.println(PSTR("Choose subcommand:"));
+  Serial.println(PSTR(" [T] toggle"));
+  Serial.println(PSTR(" [0] power off"));
+  Serial.println(PSTR(" [1] power on"));
   uint8_t cmd = Serial.read();
 
   if (cmd == 't') {
@@ -78,15 +79,15 @@ void CommandLine_subcommandPower() {
     CommandLine__handleBasicCommand(payload, 1);
     CommandLine__waitForResponse();
   } else {
-    Serial.println("Unknown option.");
+    Serial.println(PSTR("Unknown option."));
   }
 }
 
 void CommandLine_subcommandTemperature() {
-  Serial.println("Choose subcommand:");
-  Serial.println(" [U] target up");
-  Serial.println(" [D] target down");
-  Serial.println(" [E] set exact target");
+  Serial.println(PSTR("Choose subcommand:"));
+  Serial.println(PSTR(" [U] target up"));
+  Serial.println(PSTR(" [D] target down"));
+  Serial.println(PSTR(" [E] set exact target"));
   uint8_t cmd = Serial.read();
 
   if (cmd == 'u') {
@@ -103,7 +104,7 @@ void CommandLine_subcommandTemperature() {
     Serial.print("Enter exact temperature desired [2 digits]: ");
     const char digits[2] = { Serial.read(), Serial.read() };
     uint8_t target = atoi(digits);
-    Serial.println("");
+    Serial.println(PSTR(""));
     Serial.print("Setting temperature to ");
     Serial.putb(target);
     Serial.print(": ");
@@ -111,17 +112,17 @@ void CommandLine_subcommandTemperature() {
     CommandLine__handleBasicCommand(payload, 2);
     CommandLine__waitForResponse();
   } else {
-    Serial.println("Unknown option.");
+    Serial.println(PSTR("Unknown option."));
   }
 }
 
 void CommandLine_subcommandMode() {
-  Serial.println("Choose subcommand:");
-  Serial.println(" [N] next mode (cycle)");
-  Serial.println(" [C] cool");
-  Serial.println(" [E] energy saver");
-  Serial.println(" [D] dry");
-  Serial.println(" [F] fan only");
+  Serial.println(PSTR("Choose subcommand:"));
+  Serial.println(PSTR(" [N] next mode (cycle)"));
+  Serial.println(PSTR(" [C] cool"));
+  Serial.println(PSTR(" [E] energy saver"));
+  Serial.println(PSTR(" [D] dry"));
+  Serial.println(PSTR(" [F] fan only"));
   uint8_t cmd = Serial.read();
 
   if (cmd == 'n') {
@@ -150,16 +151,16 @@ void CommandLine_subcommandMode() {
     CommandLine__handleBasicCommand(payload, 1);
     CommandLine__waitForResponse();
   } else {
-    Serial.println("Unknown mode.");
+    Serial.println(PSTR("Unknown mode."));
   }
 }
 
 void CommandLine_subcommandFanSpeed() {
-  Serial.println("Choose subcommand:");
-  Serial.println(" [N] next fan speed (cycle)");
-  Serial.println(" [L] low");
-  Serial.println(" [M] medium");
-  Serial.println(" [H] high");
+  Serial.println(PSTR("Choose subcommand:"));
+  Serial.println(PSTR(" [N] next fan speed (cycle)"));
+  Serial.println(PSTR(" [L] low"));
+  Serial.println(PSTR(" [M] medium"));
+  Serial.println(PSTR(" [H] high"));
   uint8_t cmd = Serial.read();
 
   if (cmd == 'n') {
@@ -183,26 +184,26 @@ void CommandLine_subcommandFanSpeed() {
     CommandLine__handleBasicCommand(payload, 1);
     CommandLine__waitForResponse();
   } else {
-    Serial.println("Unknown fan speed.");
+    Serial.println(PSTR("Unknown fan speed."));
   }
 }
 
 void CommandLine_subcommandDumpLog() {
-  Serial.println("Starting logger");
+  Serial.println(PSTR("Starting logger"));
   EnvironmentalLogging_start();
   uint8_t data[EL_TOTAL_DATA_LENGTH];
-  Serial.println("Getting log data");
+  Serial.println(PSTR("Getting log data"));
   EnvironmentalLogging_readLog(data, EL_TOTAL_DATA_LENGTH);
-  Serial.println("Got logger data");
+  Serial.println(PSTR("Got logger data"));
   uint16_t i;
   for (i = 0; i < EL_TOTAL_DATA_LENGTH; i += 2) {
     Serial.print("H: ");
     Serial.putb(data[i]);
     Serial.print("% T: ");
     Serial.putb(data[i + 1]);
-    Serial.println("C");
+    Serial.println(PSTR("C"));
   }
-  Serial.println("Done");
+  Serial.println(PSTR("Done"));
 }
 
 void CommandLine_subcommandReset() {
@@ -210,11 +211,11 @@ void CommandLine_subcommandReset() {
   uint8_t payload[1] = { SPOKE_CMD_RESET };
   CommandLine__handleBasicCommand(payload, 1);
   CommandLine__waitForResponse();
-  Serial.println("Please reset the AC to:");
-  Serial.println(" - mode: cool");
-  Serial.println(" - temperature: 70");
-  Serial.println(" - fan speed: low");
-  Serial.println(" - turn the AC off");
+  Serial.println(PSTR("Please reset the AC to:"));
+  Serial.println(PSTR(" - mode: cool"));
+  Serial.println(PSTR(" - temperature: 70"));
+  Serial.println(PSTR(" - fan speed: low"));
+  Serial.println(PSTR(" - turn the AC off"));
 }
 
 void CommandLine_subcommandStatus() {
@@ -229,13 +230,13 @@ void CommandLine_subcommandStatus() {
   int i = 0;
   while(!NRF24_dataAvailable()){
     if (i++ > 1000) {
-      Serial.println(" timeout");
+      Serial.println(PSTR(" timeout"));
       return;
     }
     _delay_ms(1);
   }
 
-  Serial.println("");
+  Serial.println(PSTR(""));
 
   uint8_t data[SPOKE_STATUS_LEN];
   uint8_t len = NRF24_fetch(data, SPOKE_STATUS_LEN);
@@ -248,7 +249,7 @@ void CommandLine_subcommandStatus() {
       Serial.putb(data[i]);
       Serial.print(" - ");
     }
-    Serial.println("");
+    Serial.println(PSTR(""));
     return;
   }
 
@@ -258,31 +259,31 @@ void CommandLine_subcommandStatus() {
   Serial.println(AC_STATUS_ON(acStatus) ? "on" : "off");
   Serial.print("Mode: ");
   if (AC_STATUS_MODE(acStatus) == AC_MODE_COOL) {
-    Serial.println("cool");
+    Serial.println(PSTR("cool"));
   } else if (AC_STATUS_MODE(acStatus) == AC_MODE_ENERGY_SAVER) {
-    Serial.println("energy saver");
+    Serial.println(PSTR("energy saver"));
   } else if (AC_STATUS_MODE(acStatus) == AC_MODE_FAN) {
-    Serial.println("fan only");
+    Serial.println(PSTR("fan only"));
   } else if (AC_STATUS_MODE(acStatus) == AC_MODE_DRY) {
-    Serial.println("dry");
+    Serial.println(PSTR("dry"));
   } else {
-    Serial.println("unknown");
+    Serial.println(PSTR("unknown"));
   }
 
   Serial.print("Fan speed: ");
   if (AC_STATUS_FAN(acStatus) == AC_FAN_SPD_LOW) {
-    Serial.println("low");
+    Serial.println(PSTR("low"));
   } else if (AC_STATUS_FAN(acStatus) == AC_FAN_SPD_MED) {
-    Serial.println("medium");
+    Serial.println(PSTR("medium"));
   } else if (AC_STATUS_FAN(acStatus) == AC_FAN_SPD_HIGH) {
-    Serial.println("high");
+    Serial.println(PSTR("high"));
   } else {
-    Serial.println("unknown");
+    Serial.println(PSTR("unknown"));
   }
 
   Serial.print("Temperature target: ");
   Serial.putb(AC_STATUS_TEMP(acStatus));
-  Serial.println("");
+  Serial.println(PSTR(""));
 }
 
 void CommandLine_subcommandEnvironment() {
@@ -297,13 +298,13 @@ void CommandLine_subcommandEnvironment() {
   int i = 0;
   while(!NRF24_dataAvailable()){
     if (i++ > 1000) {
-      Serial.println(" timeout");
+      Serial.println(PSTR(" timeout"));
       return;
     }
     _delay_ms(1);
   }
 
-  Serial.println("");
+  Serial.println(PSTR(""));
 
   uint8_t data[SPOKE_ENV_LEN];
   uint8_t len = NRF24_fetch(data, SPOKE_ENV_LEN);
@@ -316,24 +317,24 @@ void CommandLine_subcommandEnvironment() {
       Serial.putb(data[i]);
       Serial.print(" - ");
     }
-    Serial.println("");
+    Serial.println(PSTR(""));
     return;
   }
 
   Serial.print("Humidity: ");
   Serial.putb(data[SPOKE_ENV_HUMIDITY_IDX]);
-  Serial.println("%");
+  Serial.println(PSTR("%"));
 
   Serial.print("Temperature: ");
   Serial.putb(data[SPOKE_ENV_TEMPERATURE_IDX]);
-  Serial.println("c");
+  Serial.println(PSTR("c"));
 }
 
 void CommandLine__handleBasicCommand(uint8_t* payload, uint8_t len) {
   if (NRF24_send(payload, len)) {
-    Serial.println("sent.");
+    Serial.println(PSTR("sent."));
   } else {
-    Serial.println("failed.");
+    Serial.println(PSTR("failed."));
   }
 }
 
@@ -345,7 +346,7 @@ void CommandLine__waitForResponse() {
   int i = 0;
   while(!NRF24_dataAvailable()){
     if (i++ > 1000) {
-      Serial.println("timeout");
+      Serial.println(PSTR("timeout"));
       return;
     }
     _delay_ms(1);
@@ -355,12 +356,12 @@ void CommandLine__waitForResponse() {
   NRF24_fetch(data, 10);
 
   if (data[0] == SPOKE_RESP_OK) {
-    Serial.println("ok");
+    Serial.println(PSTR("ok"));
   } else if (data[0] == SPOKE_RESP_FAIL) {
-    Serial.println("failed");
+    Serial.println(PSTR("failed"));
   } else {
     Serial.print("unknown reply: ");
     Serial.puth(data[0]);
-    Serial.println("");
+    Serial.println(PSTR(""));
   }
 }
