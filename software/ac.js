@@ -29,62 +29,26 @@ function AC(serialPort) {
     // data[4..4+SIZE] = DATA
 
     if (data[0] != 0x03) {
-      this.emit('lastCommandFailed');
-      console.error('Command rejected by hub');
-      return;
+      var error = 'Command rejected by hub';
+      return this.lastCallback(error);
     }
 
     if (data[1] != 0x01) {
-      this.emit('lastCommandFailed');
-      console.error('Transmission from hub to spoke failed');
-      return;
+      var error = 'Transmission from hub to spoke failed';
+      return this.lastCallback(error);
     }
 
     if (data[2] != 0x04) {
-      this.emit('lastCommandFailed');
-      console.error('Spoke did not respond after command was sent');
-      return;
+      var error = 'Spoke did not respond after command was sent';
+      return this.lastCallback(error);
     }
 
     console.log('Got', data[3], 'bytes back from spoke');
 
-    var payload = data.slice(4);
-
-    if (payload[0] == 0x1 || payload[0] == 0x4) {
-      this.emit('lastCommandOk');
-      this._parseState(payload.slice(1));
-    } else if (payload[0] == 0x2) {
-      this.emit('lastCommandFailed');
-      console.error('Spoke rejected the command');
-      return;
-    } else if (payload[0] == 0x8) {
-      this.emit('lastCommandOk');
-      this._parseEnv(payload.slice(1));
-      this.emit('statusUpdated');
+    if (this.lastCallback) {
+      this.lastCallback(false, data.slice(4));
     } else {
-      console.error('Unknown payload', payload);
-    }
-  }.bind(this));
-
-
-  this.on('debugData', function (data) {
-    console.log('DEBUG:', data.slice(1).toString());
-  }.bind(this));
-
-  this.on('lastCommandFailed', function () {
-    if (this.lastCallback) {
-      console.log(this.lastCallback)
-      this.lastCallback(false);
-      this.lastCallback = null;
-    }
-  }.bind(this));
-
-  this.on('lastCommandOk', function () {
-    if (this.lastCallback) {
-      this.once('statusUpdated', function () {
-        this.lastCallback(true);
-        this.lastCallback = null;
-      }.bind(this));
+      console.error('No one to give this data to?');
     }
   }.bind(this));
 }
@@ -117,28 +81,51 @@ AC.prototype.status = function () {
   };
 };
 
+AC.prototype._basicResponseParse = function (cb, err, payload) {
+  delete this.lastCallback;
+
+  if (err) {
+    console.error(err);
+    return cb(false);
+  } else if (payload[0] == 0x01 || payload[0] == 0x04) {
+    // SPOKE_RESP_OK / SPOKE_RESP_STATUS
+    this._parseState(payload.slice(1));
+    return cb(true);
+  } else if (payload[0] == 0x08) {
+    // SPOKE_RESP_ENV
+    this._parseEnv(payload.slice(1));
+    return cb(true);
+  } else if (payload[0] == 0x02) {
+    // SPOKE_RESP_FAIL
+    console.error('Spoke rejected the command');
+    return cb(false);
+  } else {
+    console.error('Cannot process payload', payload);
+  }
+}
+
 AC.prototype.power = function (mode, cb) {
-  this._sendCmd(commands.power[mode], cb);
+  this._sendCmd(commands.power[mode], this._basicResponseParse.bind(this, cb));
 };
 
 AC.prototype.reset = function (cb) {
-  this._sendCmd(commands.reset, cb);
+  this._sendCmd(commands.reset, this._basicResponseParse.bind(this, cb));
 };
 
 AC.prototype.environmentFromChip = function (cb) {
-  this._sendCmd(commands.environment, cb);
+  this._sendCmd(commands.environment, this._basicResponseParse.bind(this, cb));
 };
 
 AC.prototype.statusFromChip = function (cb) {
-  this._sendCmd(commands.status, cb);
+  this._sendCmd(commands.status, this._basicResponseParse.bind(this, cb));
 };
 
 AC.prototype.tempUp = function (cb) {
-  this._sendCmd(commands.temperature.up, cb);
+  this._sendCmd(commands.temperature.up, this._basicResponseParse.bind(this, cb));
 };
 
 AC.prototype.tempDown = function (cb) {
-  this._sendCmd(commands.temperature.down, cb);
+  this._sendCmd(commands.temperature.down, this._basicResponseParse.bind(this, cb));
 };
 
 AC.prototype.tempExact = function (temp, cb) {
@@ -147,22 +134,22 @@ AC.prototype.tempExact = function (temp, cb) {
   buffer.writeUInt8(commands.temperature.exact, 1);
   buffer.writeUInt8(temp, 2);
   buffer.writeUInt8(0x0A, 3);
-  this._sendCmd(buffer, cb);
+  this._sendCmd(buffer, this._basicResponseParse.bind(this, cb));
 };
 
 AC.prototype.setFanSpeed = function (speed, cb) {
-  this._sendCmd(commands.fanSpeed[speed], cb);
+  this._sendCmd(commands.fanSpeed[speed], this._basicResponseParse.bind(this, cb));
 };
 
 AC.prototype.setPowerTimer = function (onOrOff, hours, cb) {
   var buffer = new Buffer(2);
   buffer.writeUInt8(commands.timer[onOrOff], 0);
   buffer.writeUInt8(hours, 1);
-  this._sendCmd(buffer, cb);
+  this._sendCmd(buffer, this._basicResponseParse.bind(this, cb));
 };
 
 AC.prototype.setMode = function (mode, cb) {
-  this._sendCmd(commands.mode[mode], cb);
+  this._sendCmd(commands.mode[mode], this._basicResponseParse.bind(this, cb));
 };
 
 AC.prototype._sendCmd = function (bits, cb) {
@@ -201,7 +188,7 @@ AC.prototype._sendCmd = function (bits, cb) {
 
   this.serialPort.write(buf, function (_err) {
     if (_err && this.lastCallback) {
-      this.lastCallback(_err);
+      this.lastCallback("Serial error", []);
       this.lastCallback = null;
     }
   }.bind(this));
@@ -213,7 +200,6 @@ AC.prototype._parseState = function (buffer) {
   this.fanSpeed = FAN_SPEEDS[((3 << 8) & statusInt) >> 8];
   this.mode = MODES[((3 << 10) & statusInt) >> 10];
   this.running = !!((1 << 12) & statusInt);
-  this.emit('statusUpdated');
 }
 
 AC.prototype._parseEnv = function (buffer) {
@@ -222,7 +208,6 @@ AC.prototype._parseEnv = function (buffer) {
     temp: buffer.readInt8(1),
     updatedAt: Date.now(),
   };
-  this.emit('environmentUpdated');
 };
 
 AC.prototype.init = function (cb) {
