@@ -4,6 +4,8 @@
 
 // These come from the serial interface command processing
 #define SERIAL_CMD_PIPE     0x01
+#define SERIAL_CMD_ENV_LOG  0x02
+
 #define SERIAL_CMD_FAILED   0x02
 #define SERIAL_CMD_OK       0x03
 

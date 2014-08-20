@@ -81,7 +81,7 @@ AC.prototype.status = function () {
   };
 };
 
-AC.prototype._basicResponseParse = function (cb, err, payload) {
+AC.prototype._basicResponseParse = function (cb, err, payload, finalCb) {
   delete this.lastCallback;
 
   if (err) {
@@ -100,7 +100,12 @@ AC.prototype._basicResponseParse = function (cb, err, payload) {
     console.error('Spoke rejected the command');
     return cb(false);
   } else {
-    console.error('Cannot process payload', payload);
+    if (finalCb) {
+      // Someone wants the data. It's their problem now.
+      return finalCb(payload);
+    } else {
+      console.error('Cannot process payload', payload);
+    }
   }
 }
 
@@ -111,6 +116,27 @@ AC.prototype.power = function (mode, cb) {
 AC.prototype.reset = function (cb) {
   this._sendCmd(commands.reset, this._basicResponseParse.bind(this, cb));
 };
+
+AC.prototype.environmentLog = function (count, cb) {
+  var buffer = new Buffer(3);
+  buffer.writeUInt8(0x02, 0);
+  buffer.writeUInt8(count, 1);
+  buffer.writeUInt8(0x0A, 2);
+  this._sendCmd(buffer, function (err, payload) {
+    this._basicResponseParse(cb, err, payload, function (data) {
+      var humidity = [];
+      var temperature = [];
+      for (var i = 0; i < payload.length; i += 2) {
+        humidity.push(payload.readUInt8(i));
+        temperature.push(payload.readInt8(i + 1));
+      }
+      cb(true, {
+        humidity: humidity,
+        temperature: temperature
+      });
+    }.bind(this));
+  }.bind(this));
+}
 
 AC.prototype.environmentFromChip = function (cb) {
   this._sendCmd(commands.environment, this._basicResponseParse.bind(this, cb));

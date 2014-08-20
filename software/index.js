@@ -37,6 +37,15 @@ app.get('/cmd/reset', sendCmd.bind(this, 'reset'));
 app.get('/cmd/status', sendCmd.bind(this, 'statusFromChip'));
 app.get('/cmd/environment', sendCmd.bind(this, 'environmentFromChip'));
 
+app.get('/cmd/environment/log', function (req, res) {
+  ac.environmentLog(20, function (success, logData) {
+    res.send(JSON.stringify({
+      success: success,
+      log: logData
+    }));
+  });
+});
+
 ac.init(function () {
   app.listen(3000);
 });

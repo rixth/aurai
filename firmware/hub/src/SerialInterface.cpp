@@ -8,6 +8,7 @@
 #include <NRF24L01.h>
 #include <SpokeCommands.h>
 #include <AirConditioner.h>
+#include <EnvironmentalLogger.h>
 
 void SerialInterface_start() {
   // Return if no data is available
@@ -31,6 +32,16 @@ void SerialInterface_start() {
   if (cmd == SERIAL_CMD_PIPE) {
     Serial.print(SERIAL_CMD_OK);
     SerialInterface_pipeBufferToSpoke(buf, i);
+  } else if (cmd == SERIAL_CMD_ENV_LOG) {
+    Serial.print(SERIAL_CMD_OK);
+    Serial.print(SERIAL_SEND_OK);
+    Serial.print(SERIAL_RESP_ENV_LOG);
+    Serial.print(buf[0]);
+    uint8_t data[255];
+    EnvironmentalLogging_readLog(data, buf[0]);
+    for (i = 0; i < buf[0]; i++) {
+      Serial.print(data[i]);
+    }
   } else {
     Serial.print(SERIAL_CMD_FAILED);
   }
