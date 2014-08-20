@@ -60,15 +60,16 @@ $('.core-metrics').click(function () {
 })
 
 function updateStatus() {
-  $.getJSON('/cmd/environment', function (envResp) {
-    if (envResp.result.temp) {
-      envResp.result.dewPoint = dewPoint(envResp.result.humidity, envResp.result.temp);
-    }
-    renderEnvironment(envResp.result);
-  });
-
   $.getJSON('/cmd/status', function (statusResp) {
     renderStatus(statusResp.result);
+    setTimeout(function () {
+      $.getJSON('/cmd/environment', function (envResp) {
+        if (envResp.result.environment.temp) {
+          envResp.result.environment.dewPoint = dewPoint(envResp.result.environment.humidity, envResp.result.environment.temp);
+        }
+        renderEnvironment(envResp.result.environment);
+      });
+    }, 250);
   });
 }
 

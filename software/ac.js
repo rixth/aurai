@@ -16,7 +16,7 @@ function AC(serialPort) {
 
   this.serialPort = new SerialPort.SerialPort(this.serialPortPath, {
     baudrate: 9600,
-    parser: bufferParser(true, true)
+    parser: bufferParser(true, false)
   });
 
   this.serialPort.on('data', function (data) {
@@ -167,7 +167,7 @@ AC.prototype.setMode = function (mode, cb) {
 
 AC.prototype._sendCmd = function (bits, cb) {
   if (this.lastCallback) {
-    return this.queue.push([].slice.call(arguments, 0));
+    return this.queue.push(arguments);
   }
 
   var buf;
@@ -191,18 +191,19 @@ AC.prototype._sendCmd = function (bits, cb) {
   this.lastCallback = function () {
     cb.apply(this, arguments);
     if (this.queue.length) {
-      this._sendCmd.apply(this, this.queue.unshift());
+      args = this.queue.shift();
+      console.log(args);
+      this._sendCmd.apply(this, args);
     }
   }.bind(this);
 
   console.log('Writing', buf, 'to serial port');
 
-  this.serialPort.write(buf, function () {
-    this.serialPort.drain(function (_err) {
-      if (_err && this.lastCallback) {
-        this.lastCallback(_err);
-      }
-    }.bind(this));
+  this.serialPort.write(buf, function (_err) {
+    if (_err && this.lastCallback) {
+      this.lastCallback(_err);
+      this.lastCallback = null;
+    }
   }.bind(this));
 }
 

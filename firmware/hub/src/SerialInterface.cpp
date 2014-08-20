@@ -36,7 +36,7 @@ void SerialInterface_start() {
       Serial.print(SERIAL_CMD_FAILED);
     }
 
-    Serial.print(0x0A);
+    Serial.println("");
   }
 }
 
@@ -44,11 +44,13 @@ void SerialInterface_pipeBufferToSpoke(uint8_t *buf, uint8_t len) {
   // Reply structure: CMD_OK/FAIL SEND_OK/FAIL RESP_OK/TO [SIZE DATA...] \n
   // Worth noting that the transaction may go OK but the spoke data is SPOKE_RESP_FAIL
 
+  DiagLEDS_set(LED_GRN);
+
   if (NRF24_send(buf, len)) {
     DiagLEDS_set(LED_GRN | LED_YLW);
     Serial.print(SERIAL_SEND_OK);
   } else {
-    DiagLEDS_set(LED_RED | LED_YLW);
+    DiagLEDS_set(LED_RED);
     Serial.print(SERIAL_SEND_FAIL);
   }
 
@@ -59,7 +61,7 @@ void SerialInterface_pipeBufferToSpoke(uint8_t *buf, uint8_t len) {
   while(!NRF24_dataAvailable()){
     if (i++ > SERIAL_REPLY_TIMEOUT_MS) {
       Serial.print(SERIAL_RESP_TIMEOUT);
-      DiagLEDS_set(LED_RED);
+      DiagLEDS_set(LED_RED | LED_YLW);
       return;
     }
     _delay_ms(1);
