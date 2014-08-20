@@ -25,7 +25,7 @@ function renderStatus(status) {
 }
 
 function renderEnvironment(environment) {
-  $("#env-temp").text(formatTemperature(environment.temp));
+  $("#env-temp").text(formatTemperature(environment.temperature));
   $("#env-humidity").text(environment.humidity + '%');
   $("#env-dewpoint").text(formatTemperature(environment.dewPoint));
 }
@@ -39,13 +39,35 @@ var setLoadingCount = (function () {
   };
 })();
 
-function runCmd(cmd) {
-  setLoadingCount(1);
+function runCmd(cmd, cb, hideLoader) {
+  if (!hideLoader) {
+    setLoadingCount(1);
+  }
   $.getJSON('/cmd/' + cmd).then(function (d) {
-    setLoadingCount(-1);
-    renderStatus(d.result);
+    if (!hideLoader) {
+      setLoadingCount(-1);
+    }
+
+    if (!d.success) {
+      return alert('Connection successful but operation failed.');
+    }
+
+    if (d.status) {
+      renderStatus(d.status);
+    }
+
+    if (d.environment) {
+      d.environment.dewPoint = dewPoint(d.environment.humidity, d.environment.temperature);
+      renderEnvironment(d.environment);
+    }
+
+    if (cb) {
+      cb(d);
+    }
   }, function () {
-    setLoadingCount(-1);
+    if (!hideLoader) {
+      setLoadingCount(-1);
+    }
     alert('HTTP Connection error.');
   });
 }
@@ -60,16 +82,8 @@ $('.core-metrics').click(function () {
 })
 
 function updateStatus() {
-  $.getJSON('/cmd/status', function (statusResp) {
-    renderStatus(statusResp.result);
-    setTimeout(function () {
-      $.getJSON('/cmd/environment', function (envResp) {
-        if (envResp.result.environment.temp) {
-          envResp.result.environment.dewPoint = dewPoint(envResp.result.environment.humidity, envResp.result.environment.temp);
-        }
-        renderEnvironment(envResp.result.environment);
-      });
-    }, 250);
+  runCmd('status', function () {
+    setTimeout(runCmd.bind(this, 'environment'), 250);
   });
 }
 

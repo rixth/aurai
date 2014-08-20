@@ -30,14 +30,14 @@ button {
 }
 
 h1 {
-  text-align: left;
-  padding-left: 15px;
+  text-align: center;
   font-weight: 400;
   font-size: 36px;
   max-width: 480px;
-  margin: 20px auto -5px auto;
+  margin: 20px auto;
   color: #aaa;
   text-shadow: 1px 1px 1px #fff;
+  font-family: 'Syncopate', sans-serif;
 }
 
 .row {

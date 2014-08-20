@@ -17,7 +17,7 @@ app.get('/cmd/temp/exact/:target', function (req, res) {
   ac.tempExact(parseInt(req.params.target, 10), function (success) {
     res.send(JSON.stringify({
       success: success,
-      result: ac.status()
+      status: ac.status()
     }));
   });
 });
@@ -35,7 +35,15 @@ app.get('/cmd/mode/fan', sendCmd.bind(this, ['setMode', 'fan']));
 
 app.get('/cmd/reset', sendCmd.bind(this, 'reset'));
 app.get('/cmd/status', sendCmd.bind(this, 'statusFromChip'));
-app.get('/cmd/environment', sendCmd.bind(this, 'environmentFromChip'));
+
+app.get('/cmd/environment', function (req, res) {
+  ac.environmentFromChip(function (success, envData) {
+    res.send(JSON.stringify({
+      success: success,
+      environment: envData
+    }));
+  });
+});
 
 app.get('/cmd/environment/log', function (req, res) {
   ac.environmentLog(20, function (success, logData) {
@@ -62,7 +70,7 @@ function sendCmd(cmd, req, res) {
   args.push(function (success) {
     res.send(JSON.stringify({
       success: success,
-      result: ac.status()
+      status: ac.status()
     }));
   });
 

@@ -139,7 +139,18 @@ AC.prototype.environmentLog = function (count, cb) {
 }
 
 AC.prototype.environmentFromChip = function (cb) {
-  this._sendCmd(commands.environment, this._basicResponseParse.bind(this, cb));
+  this._sendCmd(commands.environment, function (err, payload) {
+    this._basicResponseParse(cb, err, payload, function (data) {
+      if (data.readUInt8(0) != 0x08) {
+        return cb(false);
+      }
+
+      cb(true, {
+        humidity: data.readUInt8(1),
+        temperature: data.readInt8(2)
+      });
+    }.bind(this));
+  }.bind(this));
 };
 
 AC.prototype.statusFromChip = function (cb) {
@@ -227,14 +238,6 @@ AC.prototype._parseState = function (buffer) {
   this.mode = MODES[((3 << 10) & statusInt) >> 10];
   this.running = !!((1 << 12) & statusInt);
 }
-
-AC.prototype._parseEnv = function (buffer) {
-  this.environment = {
-    humidity: buffer.readInt8(0),
-    temp: buffer.readInt8(1),
-    updatedAt: Date.now(),
-  };
-};
 
 AC.prototype.init = function (cb) {
   this.serialPort.open(cb);
