@@ -1,3 +1,4 @@
+#include <avr/interrupt.h>
 #include <util/delay.h>
 
 #include <pins.h>
@@ -10,8 +11,20 @@
 #include <SpokeCommands.h>
 #include "CommandLine.h"
 #include "SerialInterface.h"
+#include "EnvironmentalLogger.h"
 
 #include <hub.h>
+
+volatile uint8_t cycleCount = 0;
+volatile uint32_t secondsSinceBoot = 0;
+
+ISR(TIMER0_COMPA_vect) {
+  cycleCount++;
+  if (cycleCount == 36) {
+    secondsSinceBoot++;
+    cycleCount = 0;
+  }
+}
 
 int main() {
   Flash_init();
@@ -19,6 +32,7 @@ int main() {
   SPI.begin();
   DiagLEDS_init();
   NRF24_init();
+  sei();
 
   while (1) {
     Serial.println("Aurai HUB.");
@@ -68,7 +82,15 @@ void boot() {
   }
 }
 
+void timerInit() {
+  OCR0A  = 217; // will trigger ~36hz at 8mhz
+  TIMSK0 = _BV(OCIE0A);
+  TCCR0A = _BV(WGM01);
+  TCCR0B = _BV(CS02) | _BV(CS00);
+}
+
 void commonStart() {
+  timerInit();
   initializeRadio();
 }
 
