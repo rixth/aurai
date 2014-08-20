@@ -49,13 +49,10 @@ int main() {
       commonStart();
       DiagLEDS_set(LED_YLW);
       CommandLine_start();
-    } else if (cmd == 's') {
+    } else if (cmd == 's' || cmd == 'b') {
       Serial.println("Starting Serial interface!");
       commonStart();
       DiagLEDS_set(LED_GRN);
-      SerialInterface_start();
-    } else if (cmd == 'b') {
-      commonStart();
       boot();
     } else {
       // mainTest(cmd);
@@ -66,7 +63,9 @@ int main() {
 }
 
 void boot() {
-  Serial.println("Self-hosted interface is not yet implemented.");
+  while(1) {
+    SerialInterface_start();
+  }
 }
 
 void commonStart() {

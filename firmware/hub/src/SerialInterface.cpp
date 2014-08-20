@@ -10,34 +10,32 @@
 #include <AirConditioner.h>
 
 void SerialInterface_start() {
-  while (1) {
-    // Loop while no data is available
-    while (!Serial.available()) {
-      _delay_ms(1);
-    }
-
-    uint8_t cmd = Serial.read();
-
-    // Read up to \n
-    uint8_t buf[SERIAL_BUFFER_LENTH];
-    uint8_t i;
-    for (i = 0; i < SERIAL_BUFFER_LENTH; i++) {
-      uint8_t byte = Serial.read();
-      if (byte == '\n') {
-        break;
-      }
-      buf[i] = byte;
-    }
-
-    if (cmd == SERIAL_CMD_PIPE) {
-      Serial.print(SERIAL_CMD_OK);
-      SerialInterface_pipeBufferToSpoke(buf, i);
-    } else {
-      Serial.print(SERIAL_CMD_FAILED);
-    }
-
-    Serial.println("");
+  // Return if no data is available
+  if (!Serial.available()) {
+    return;
   }
+
+  uint8_t cmd = Serial.read();
+
+  // Read up to \n
+  uint8_t buf[SERIAL_BUFFER_LENTH];
+  uint8_t i;
+  for (i = 0; i < SERIAL_BUFFER_LENTH; i++) {
+    uint8_t byte = Serial.read();
+    if (byte == '\n') {
+      break;
+    }
+    buf[i] = byte;
+  }
+
+  if (cmd == SERIAL_CMD_PIPE) {
+    Serial.print(SERIAL_CMD_OK);
+    SerialInterface_pipeBufferToSpoke(buf, i);
+  } else {
+    Serial.print(SERIAL_CMD_FAILED);
+  }
+
+  Serial.println("");
 }
 
 void SerialInterface_pipeBufferToSpoke(uint8_t *buf, uint8_t len) {
