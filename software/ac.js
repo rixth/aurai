@@ -22,6 +22,10 @@ function AC(serialPort) {
   this.serialPort.on('data', function (data) {
     console.log('Got', data);
 
+    if (!this.lastCallback) {
+      return console.error('No one to give this data to?');
+    }
+
     // data[0] = CMD_OK/FAIL
     // data[1] = SEND_OK/FAIL
     // data[2] = RESP_OK/TO
@@ -45,11 +49,7 @@ function AC(serialPort) {
 
     console.log('Got', data[3], 'bytes back from spoke');
 
-    if (this.lastCallback) {
-      this.lastCallback(false, data.slice(4));
-    } else {
-      console.error('No one to give this data to?');
-    }
+    this.lastCallback(false, data.slice(4));
   }.bind(this));
 }
 
