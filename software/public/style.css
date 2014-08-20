@@ -24,7 +24,7 @@ button {
   border: 1px solid #d6d6d6;
   border-radius: 5px;
   max-width: 480px;
-  margin: 0 auto 20px auto;
+  margin: 0 auto 40px auto;
   box-shadow: 1px 1px 2px #dedede;
   text-align: center
 }
@@ -154,6 +154,15 @@ h1 {
 
 .power-on .main-controls {
   max-height: 296px;
+}
+
+a.reset {
+  padding-top: 5px;
+  padding-right: 5px;
+  color: #aaa;
+  text-transform: lowercase;
+  float: right;
+  text-decoration: none;
 }
 
 

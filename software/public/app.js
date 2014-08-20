@@ -119,11 +119,11 @@ function updateEnvironmentalTrends() {
   }, true);
 }
 
-function sendResetCommand() {
+$('.reset').click(function () {
   if(confirm("Reset AC state to: cool, 70F, fan speed low, off?")) {
     runCmd('reset');
   }
-}
+});
 
 function toggleTempMode() {
   TEMP_MODE = (TEMP_MODE == 'c') ? 'f' : 'c';
