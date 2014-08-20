@@ -91,10 +91,6 @@ AC.prototype._basicResponseParse = function (cb, err, payload, finalCb) {
     // SPOKE_RESP_OK / SPOKE_RESP_STATUS
     this._parseState(payload.slice(1));
     return cb(true);
-  } else if (payload[0] == 0x08) {
-    // SPOKE_RESP_ENV
-    this._parseEnv(payload.slice(1));
-    return cb(true);
   } else if (payload[0] == 0x02) {
     // SPOKE_RESP_FAIL
     console.error('Spoke rejected the command');
@@ -126,9 +122,9 @@ AC.prototype.environmentLog = function (count, cb) {
     this._basicResponseParse(cb, err, payload, function (data) {
       var humidity = [];
       var temperature = [];
-      for (var i = 0; i < payload.length; i += 2) {
-        humidity.push(payload.readUInt8(i));
-        temperature.push(payload.readInt8(i + 1));
+      for (var i = 0; i < data.length; i += 2) {
+        humidity.push(data.readUInt8(i));
+        temperature.push(data.readInt8(i + 1));
       }
       cb(true, {
         humidity: humidity,

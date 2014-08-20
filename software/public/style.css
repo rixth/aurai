@@ -92,18 +92,24 @@ h1 {
   padding: 40px 0;
 }
 
-.core-metrics .rising {
+.core-metrics .fa {
+  display: none;
+}
+
+.core-metrics .rising .fa-arrow-up {
+  display: inline;
   font-size: 14px;
   vertical-align: 3px;
-  color: red;
+  color: #FF5867;
   -webkit-animation: rising 1s infinite;
 }
 
-.core-metrics .falling {
+.core-metrics .falling .fa-arrow-down {
+  display: inline;
   font-size: 14px;
-  vertical-align: 1px;
-  color: blue;
-  -webkit-animation: rising 1s infinite;
+  vertical-align: 4px;
+  color: #5082E5;
+  -webkit-animation: falling 1s infinite;
 }
 
 .no-fan-speed .fan-speed {
@@ -189,13 +195,13 @@ h1 {
 
 @-webkit-keyframes falling {
     0% {
-      vertical-align: 1px;
+      vertical-align: 5px;
     }
     50% {
-      vertical-align: -1px;
+      vertical-align: 3px;
     }
     100% {
-      vertical-align: 1px;
+      vertical-align: 5px;
     }
 }
 

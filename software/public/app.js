@@ -25,7 +25,7 @@ function renderStatus(status) {
 }
 
 function renderEnvironment(environment) {
-  $("#env-temp").text(formatTemperature(environment.temperature));
+  $("#env-temperature").text(formatTemperature(environment.temperature));
   $("#env-humidity").text(environment.humidity + '%');
   $("#env-dewpoint").text(formatTemperature(environment.dewPoint));
 }
@@ -84,7 +84,39 @@ $('.core-metrics').click(function () {
 function updateStatus() {
   runCmd('status', function () {
     setTimeout(runCmd.bind(this, 'environment'), 250);
-  });
+  }, true);
+}
+
+function updateEnvironmentalTrends() {
+  runCmd('environment/log', function (data) {
+  var lookBack = 8,
+      count = data.log.humidity.length,
+      nowHumidity = data.log.humidity[count - 1],
+      thenHumidity = data.log.humidity[count - lookBack],
+      nowTemperature = data.log.temperature[count - 1],
+      thenTemperature = data.log.temperature[count - lookBack],
+      $humidity = $('.number.humidity'),
+      $temperature = $('.number.temperature');
+
+    console.log('humidity was', thenHumidity, 'is now', nowHumidity);
+    console.log('temperature was', thenTemperature, 'is now', nowTemperature);
+
+    if (nowHumidity == thenHumidity) {
+      $humidity.removeClass('rising', 'falling');
+    } else if (nowHumidity < thenHumidity) {
+      $humidity.removeClass('rising').addClass('falling');
+    } else if (nowHumidity > thenHumidity) {
+      $humidity.removeClass('falling').addClass('rising');
+    }
+
+    if (nowTemperature == thenTemperature) {
+      $temperature.removeClass('rising', 'falling');
+    } else if (nowTemperature < thenTemperature) {
+      $temperature.removeClass('rising').addClass('falling');
+    } else if (nowTemperature > thenTemperature) {
+      $temperature.removeClass('falling').addClass('rising');
+    }
+  }, true);
 }
 
 function sendResetCommand() {
@@ -99,4 +131,6 @@ function toggleTempMode() {
 }
 
 updateStatus();
-// setInterval(updateStatus, 15000);
+updateEnvironmentalTrends();
+setInterval(updateStatus, 15000);
+setInterval(updateEnvironmentalTrends, 150000);
