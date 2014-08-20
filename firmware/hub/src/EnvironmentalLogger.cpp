@@ -43,7 +43,9 @@ void EnvironmentalLogging_log() {
   // Send data request to spoke
   uint8_t payload[1] = { SPOKE_CMD_ENV };
   if (!NRF24_send(payload, 1)) {
+#ifdef EL_DEBUG
     Serial.println("Failed to send request");
+#endif
     return;
   }
 
@@ -53,7 +55,9 @@ void EnvironmentalLogging_log() {
   uint16_t i = 0;
   while(!NRF24_dataAvailable()){
     if (i++ > EL_REPLY_TIMEOUT_MS) {
+#ifdef EL_DEBUG
       Serial.println("Timeout");
+#endif
       return;
     }
     _delay_ms(1);
@@ -63,15 +67,19 @@ void EnvironmentalLogging_log() {
   NRF24_fetch(data, SPOKE_ENV_LEN);
 
   if (data[0] != SPOKE_RESP_ENV) {
+#ifdef EL_DEBUG
     Serial.println("Bad response");
     return;
+#endif
   }
 
+#ifdef EL_DEBUG
   Serial.print("Logging to EEPROM at");
   Serial.puth(EL_headByteAddr >> 8);
   Serial.print(" ");
   Serial.puth(EL_headByteAddr & 0xFF);
   Serial.println("");
+#endif
 
   // Send two bytes to flash at EL_headByteAddr
   uint8_t dataToWrite[2] = { data[SPOKE_ENV_HUMIDITY_IDX], data[SPOKE_ENV_TEMPERATURE_IDX] };
@@ -83,11 +91,13 @@ void EnvironmentalLogging_log() {
     EL_headByteAddr = EL_MIN_DATA_BYTE_ADDR;
   }
 
-  Serial.print("Writing EEPROM head addr to");
+#ifdef EL_DEBUG
+  Serial.print("Writing EEPROM head addr to ");
   Serial.puth(EL_headByteAddr >> 8);
   Serial.print(" ");
   Serial.puth(EL_headByteAddr & 0xFF);
   Serial.println("");
+#endif
 
   uint8_t headBytes[2] = { EL_headByteAddr >> 8, EL_headByteAddr & 0xFF };
   DataFlash_write(EL_FLASH_PAGE_ADDR, EL_HEAD_BYTE_ADDR, headBytes, 2, false);
@@ -97,16 +107,15 @@ void EnvironmentalLogging_readLog(uint8_t* buf, uint16_t len) {
   // Read up to last (len / 2) readings
   // EL_ANALYZE_BUF_LEN is EL_ANALYZE_READINGS * 2 because each reading is 2 bytes
 
-  // printf("Head byte addr is %d\n", EL_headByteAddr);
-
   if (EL_headByteAddr >= len) {
     // In this case, we can just the last len bytes straight in
-    // printf("Straight read from %d for %d bytes\n", EL_headByteAddr, len);
+#ifdef EL_DEBUG
     Serial.print("Straight read from ");
     Serial.putb(EL_headByteAddr);
     Serial.print(" for ");
     Serial.putb(len);
     Serial.println(" bytes");
+#endif
     DataFlash_read(EL_FLASH_PAGE_ADDR, EL_headByteAddr - len, buf, len);
   } else {
     // Here we need wrap. Example (assuming EL_ANALYZE_READINGS is 10)
@@ -117,12 +126,13 @@ void EnvironmentalLogging_readLog(uint8_t* buf, uint16_t len) {
     // Compute the indexes and read the tail straight in to the buffer
     uint16_t tailBytesToRead = abs(EL_headByteAddr - len);
     uint16_t tailAddrToRead = (EL_MAX_DATA_BYTE_ADDR - tailBytesToRead);
-    // printf("Tail read from %d for %d bytes\n", tailAddrToRead, tailBytesToRead);
-    // Serial.print("Tail read from ");
-    // Serial.putb(tailAddrToRead);
-    // Serial.print(" for ");
-    // Serial.putb(tailBytesToRead);
-    // Serial.println(" bytes");
+#ifdef EL_DEBUG
+    Serial.print("Tail read from ");
+    Serial.putb(tailAddrToRead);
+    Serial.print(" for ");
+    Serial.putb(tailBytesToRead);
+    Serial.println(" bytes");
+#endif
     DataFlash_read(EL_FLASH_PAGE_ADDR, tailAddrToRead, buf, tailBytesToRead);
 
 
@@ -134,12 +144,13 @@ void EnvironmentalLogging_readLog(uint8_t* buf, uint16_t len) {
     // END FIXME
 
     uint16_t headAddrToRead = EL_MIN_DATA_BYTE_ADDR;
-    // printf("Head read from %d for %d bytes\n", headAddrToRead, headBytesToRead);
-    // Serial.print("Head read from ");
-    // Serial.putb(headAddrToRead);
-    // Serial.print(" for ");
-    // Serial.putb(headBytesToRead);
-    // Serial.println(" bytes");
+#ifdef EL_DEBUG
+    Serial.print("Head read from ");
+    Serial.putb(headAddrToRead);
+    Serial.print(" for ");
+    Serial.putb(headBytesToRead);
+    Serial.println(" bytes");
+#endif
     DataFlash_read(EL_FLASH_PAGE_ADDR, headAddrToRead, headBuf, headBytesToRead);
 
     memcpy(&buf[tailBytesToRead], headBuf, headBytesToRead);
