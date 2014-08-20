@@ -1,4 +1,4 @@
-#define EL_LOG_INTERVAL 2 // seconds
+#define EL_LOG_INTERVAL 5 // seconds
 
 #define EL_FLASH_PAGE_ADDR 0x00
 #define EL_HEAD_BYTE_ADDR  126
