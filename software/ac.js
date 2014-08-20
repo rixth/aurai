@@ -167,7 +167,7 @@ AC.prototype.setMode = function (mode, cb) {
 
 AC.prototype._sendCmd = function (bits, cb) {
   if (this.lastCallback) {
-    return this.queue.push(arguments);
+    return this.queue.push([].slice.call(arguments, 0));
   }
 
   var buf;
