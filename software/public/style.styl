@@ -66,7 +66,7 @@ i.trend
   display: none
   margin-left: -26px
 
-  transition: color 0.5s linear, transform 0.5s linear;
+  transition: color 0.5s linear, transform 0.5s linear, -webkit-transform 0.5s linear;
 
   font-size: 36px
   vertical-align: 16px
@@ -76,6 +76,7 @@ body.temperature-falling .trend
   display: inline-block
   color: falling-blue
   transform: rotate(180deg)
+  -webkit-transform: rotate(180deg)
 
 body.temperature-rising .trend
   display: inline-block
