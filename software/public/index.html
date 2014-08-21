@@ -8,7 +8,7 @@
   <link href='http://fonts.googleapis.com/css?family=Nunito:400,700' rel='stylesheet' type='text/css'>
   <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 </head>
-<body class="temperature-falling power-off">
+<body>
   <div class="container">
     <h1>Aurai</h1>
     <div class="current-temperature">
@@ -30,28 +30,33 @@
       </div>
     </div>
     <div class="target-temperature">
-      <div class="target-down"><i class="fa fa-caret-down"></i></div>
+      <div data-cmd="temp/down" class="target-down"><i class="fa fa-caret-down"></i></div>
       <div class="target">
         <span class="number">70</span><span class="temperature-unit">F</span>
       </div>
-      <div class="target-up"><i class="fa fa-caret-up"></i></div>
+      <div data-cmd="temp/up" class="target-up"><i class="fa fa-caret-up"></i></div>
     </div>
     <div class="bottom-actions">
       <div class="inner">
-        <div class="mode">
+        <div data-cmd="mode/next" class="mode">
           <i class="fa fa-spinner"></i>
           <span class="current">Cool</span>
         </div>
-        <div class="power">
+        <div data-cmd="power/toggle" class="power">
           <i class="fa fa-power-off"></i>
         </div>
-        <div class="fan-speed">
+        <div data-cmd="fan-speed/next" class="fan-speed">
           <i class="fan-icon"></i>
           <span class="current">High</span>
         </div>
       </div>
     </div>
   </div>
+  <div class="reset">
+    <a href="#">(reset)</a>
+  </div>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="/app.js"></script>
+  <script src="/dew.js"></script>
 </body>
 </html>

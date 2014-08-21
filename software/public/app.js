@@ -6,28 +6,29 @@ var TEMP_MODE = localStorage.getItem('tempMode') || 'f';
 
 function formatTemperature(degreeC) {
   if (!TEMP_MODE || TEMP_MODE === 'c') {
-    return Math.round(degreeC) + '°C';
+    return Math.round(degreeC)
   } else {
-    return Math.round(degreeC * 1.8000 + 32.00)  + '°F';
+    return Math.round(degreeC * 1.8000 + 32.00);
   }
 }
 
 function renderStatus(status) {
-  $(document.body).toggleClass('no-fan-speed', status.mode === 'DRY').
-    toggleClass('no-temp-target', status.mode === 'FAN').
-    toggleClass('power-off', !status.running).
-    toggleClass('power-on', status.running);
+  // $(document.body).toggleClass('no-fan-speed', status.mode === 'DRY').
+  //   toggleClass('no-temp-target', status.mode === 'FAN').
+  //   toggleClass('power-off', !status.running).
+  //   toggleClass('power-on', status.running);
 
-  $('.power').toggleClass('on', status.running).toggleClass('off', !status.running);
-  $("[data-cmd='mode/next'] .desc").text('Mode: ' + status.mode.toLowerCase().replace(/_/, ' '));
-  $("[data-cmd='fan-speed/next'] .desc").text('Fan: ' + status.fanSpeed.toLowerCase().replace(/_/, ' '));
-  $("#target-temp").text(status.temp);
+  $(document.body).toggleClass('power-off', !status.running);
+  $(".mode .current").text(status.mode.toLowerCase().replace(/_/, ' ').replace(/energy saver/, 'eco'));
+  $(".fan-speed .current").text(status.fanSpeed.toLowerCase().replace(/_/, ' '));
+  $(".target-temperature .number").text(status.temp);
 }
 
 function renderEnvironment(environment) {
-  $("#env-temperature").text(formatTemperature(environment.temperature));
-  $("#env-humidity").text(environment.humidity + '%');
-  $("#env-dewpoint").text(formatTemperature(environment.dewPoint));
+  $(".current-temperature .number").text(formatTemperature(environment.temperature));
+  $(".humidity .number").text(environment.humidity);
+  $(".dewpoint .number").text(formatTemperature(environment.dewPoint));
+  $(".dewpoint .temperature-unit, .current-temperature .temperature-unit").text(TEMP_MODE.toUpperCase())
 }
 
 var setLoadingCount = (function () {
@@ -76,7 +77,7 @@ $('[data-cmd]').click(function (evt) {
   runCmd($(evt.currentTarget).attr('data-cmd'));
 });
 
-$('.core-metrics').click(function () {
+$('.temperature-unit').click(function () {
   toggleTempMode();
   localStorage.setItem('tempMode', TEMP_MODE);
 })
@@ -91,35 +92,20 @@ function updateEnvironmentalTrends() {
   runCmd('environment/log', function (data) {
   var lookBack = 8,
       count = data.log.humidity.length,
-      nowHumidity = data.log.humidity[count - 1],
-      thenHumidity = data.log.humidity[count - lookBack],
       nowTemperature = data.log.temperature[count - 1],
-      thenTemperature = data.log.temperature[count - lookBack],
-      $humidity = $('.number.humidity'),
-      $temperature = $('.number.temperature');
-
-    console.log('humidity was', thenHumidity, 'is now', nowHumidity);
-    console.log('temperature was', thenTemperature, 'is now', nowTemperature);
-
-    if (nowHumidity == thenHumidity) {
-      $humidity.removeClass('rising', 'falling');
-    } else if (nowHumidity < thenHumidity) {
-      $humidity.removeClass('rising').addClass('falling');
-    } else if (nowHumidity > thenHumidity) {
-      $humidity.removeClass('falling').addClass('rising');
-    }
+      thenTemperature = data.log.temperature[count - lookBack];
 
     if (nowTemperature == thenTemperature) {
-      $temperature.removeClass('rising', 'falling');
+      $(document.body).removeClass('temperature-rising', 'temperature-falling');
     } else if (nowTemperature < thenTemperature) {
-      $temperature.removeClass('rising').addClass('falling');
+      $(document.body).removeClass('temperature-rising').addClass('temperature-falling');
     } else if (nowTemperature > thenTemperature) {
-      $temperature.removeClass('falling').addClass('rising');
+      $(document.body).removeClass('temperature-falling').addClass('temperature-rising');
     }
   }, true);
 }
 
-$('.reset').click(function () {
+$('.reset a').click(function () {
   if(confirm("Reset AC state to: cool, 70F, fan speed low, off?")) {
     runCmd('reset');
   }
