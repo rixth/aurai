@@ -13,10 +13,8 @@ function formatTemperature(degreeC) {
 }
 
 function renderStatus(status) {
-  // $(document.body).toggleClass('no-fan-speed', status.mode === 'DRY').
-  //   toggleClass('no-temp-target', status.mode === 'FAN').
-  //   toggleClass('power-off', !status.running).
-  //   toggleClass('power-on', status.running);
+  $(document.body).toggleClass('no-fan-speed', status.mode === 'DRY').
+    toggleClass('no-temp-target', status.mode === 'FAN');
 
   $(document.body).toggleClass('power-off', !status.running);
   $(".mode .current").text(status.mode.toLowerCase().replace(/_/, ' ').replace(/energy saver/, 'eco'));

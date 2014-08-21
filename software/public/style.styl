@@ -22,10 +22,10 @@ body
   user-select: none
   -webkit-user-select: none
 
-  &.temperature-rising
+  &.temperature-rising:not(.power-off)
     background: rising-red
 
-  &.temperature-falling
+  &.temperature-falling:not(.power-off)
     background: falling-blue
 
 .container
@@ -211,8 +211,10 @@ body.temperature-rising .trend
 .fan-speed
   float: right
 
-.power, .bottom-actions,
-.target-up, .target-up:hover,
+.power,
+.bottom-actions,
+.fan-only,
+.target-up,.target-up:hover,
 .target-down, .target-down:hover,
 .target-up i, .target-up:hover i,
 .target-down i, .target-down:hover i
@@ -222,9 +224,13 @@ body.temperature-rising .trend
   .power, .bottom-actions
     color: disabled-gray
 
+.power-off, .no-fan-speed
+  .fan-speed
+    color: disabled-gray
   .fan-icon
     background-image: url(/fan-off.png)
 
+.power-off, .no-temp-target
   .target-up, .target-up:hover,
   .target-down, .target-down:hover
     background: disabled-gray
