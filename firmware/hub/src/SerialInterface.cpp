@@ -16,30 +16,31 @@ void SerialInterface_start() {
     return;
   }
 
-  uint8_t cmd = Serial.read();
-
-  // Read up to \n
-  uint8_t buf[SERIAL_BUFFER_LENTH];
-  uint8_t i;
-  for (i = 0; i < SERIAL_BUFFER_LENTH; i++) {
-    uint8_t byte = Serial.read();
-    if (byte == '\n') {
-      break;
-    }
-    buf[i] = byte;
+  uint8_t len = Serial.read();
+  if (len == 0 || len > SERIAL_BUFFER_LENTH) {
+    Serial.print(SERIAL_CMD_FAILED);
+    Serial.println("");
+    return;
   }
 
-  if (cmd == SERIAL_CMD_PIPE) {
+   // Read up to len bytes
+  uint8_t buf[SERIAL_BUFFER_LENTH];
+  uint8_t i;
+  for (i = 0; i < len; i++) {
+    buf[i] = Serial.read();
+  }
+
+  if (buf[0] == SERIAL_CMD_PIPE) {
     Serial.print(SERIAL_CMD_OK);
-    SerialInterface_pipeBufferToSpoke(buf, i);
-  } else if (cmd == SERIAL_CMD_ENV_LOG) {
+    SerialInterface_pipeBufferToSpoke(&buf[1], len - 1);
+  } else if (buf[0] == SERIAL_CMD_ENV_LOG) {
     Serial.print(SERIAL_CMD_OK);
     Serial.print(SERIAL_SEND_OK);
     Serial.print(SERIAL_RESP_RECEIVED);
-    Serial.print(buf[0]);
+    Serial.print(buf[1]);
     uint8_t data[255];
-    EnvironmentalLogging_readLog(data, buf[0]);
-    for (i = 0; i < buf[0]; i++) {
+    EnvironmentalLogging_readLog(data, buf[1]);
+    for (i = 0; i < buf[1]; i++) {
       Serial.print(data[i]);
     }
   } else {

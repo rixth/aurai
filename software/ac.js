@@ -114,10 +114,9 @@ AC.prototype.reset = function (cb) {
 };
 
 AC.prototype.environmentLog = function (count, cb) {
-  var buffer = new Buffer(3);
+  var buffer = new Buffer(2);
   buffer.writeUInt8(0x02, 0);
   buffer.writeUInt8(count, 1);
-  buffer.writeUInt8(0x0A, 2);
   this._sendCmd(buffer, function (err, payload) {
     this._basicResponseParse(cb, err, payload, function (data) {
       var humidity = [];
@@ -162,11 +161,10 @@ AC.prototype.tempDown = function (cb) {
 };
 
 AC.prototype.tempExact = function (temp, cb) {
-  var buffer = new Buffer(4);
+  var buffer = new Buffer(3);
   buffer.writeUInt8(0x01, 0);
   buffer.writeUInt8(commands.temperature.exact, 1);
   buffer.writeUInt8(temp, 2);
-  buffer.writeUInt8(0x0A, 3);
   this._sendCmd(buffer, this._basicResponseParse.bind(this, cb));
 };
 
@@ -175,9 +173,10 @@ AC.prototype.setFanSpeed = function (speed, cb) {
 };
 
 AC.prototype.setPowerTimer = function (onOrOff, hours, cb) {
-  var buffer = new Buffer(2);
-  buffer.writeUInt8(commands.timer[onOrOff], 0);
-  buffer.writeUInt8(hours, 1);
+  var buffer = new Buffer(3);
+  buffer.writeUInt8(0x01, 0);
+  buffer.writeUInt8(commands.timer[onOrOff], 1);
+  buffer.writeUInt8(hours, 2);
   this._sendCmd(buffer, this._basicResponseParse.bind(this, cb));
 };
 
@@ -193,16 +192,21 @@ AC.prototype._sendCmd = function (bits, cb) {
   var buf;
 
   if (Buffer.isBuffer(bits)) {
-    buf = bits;
+    // Prefix with the number of bytes
+    var dataBuf = bits;
+    buf = new Buffer(dataBuf.length + 1);
+    buf.writeUInt8(dataBuf.length, 0);
+    dataBuf.copy(buf, 1);
   } else if (typeof bits === 'number') {
     buf = new Buffer(3);
-    buf.writeUInt8(0x01, 0);
-    buf.writeUInt8(bits, 1);
-    buf.writeUInt8(0x0A, 2);
+    buf.writeUInt8(0x02, 0);
+    buf.writeUInt8(0x01, 1);
+    buf.writeUInt8(bits, 2);
   } else if (Array.isArray(bits)) {
-    buf = new Buffer(bits.length);
+    buf = new Buffer(bits.length + 1);
+    buf.writeUInt8(bits.length, 0);
     bits.forEach(function (bit, idx) {
-      buf.writeUInt8(bit, idx);
+      buf.writeUInt8(bit, idx + 1);
     });
   } else {
     throw new Error("don't know what to do with " + bits);
