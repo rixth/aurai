@@ -1,55 +1,55 @@
-module.exports = function (debug, splitOnOnlyNewline) {
-  var data = new Buffer(0);
+module.exports = function (debug) {
+  var data = new Buffer(0),
+      bufferIsEmpty = true,
+      targetLength = null;
 
-  return function (emitter, buffer) {
-    var newlineIndexes = [];
+  // STATUS STATUS STATUS LENGTH [DATA...]
+  var LENGTH_BYTE_IDX = 3,
+      STATUS_SIZE = 3,
+      PREAMBLE_SIZE = STATUS_SIZE + 1;
+
+  return function self(emitter, buffer) {
     data = Buffer.concat([data, buffer]);
 
-    if (debug) {
-      console.log('Data is', data);
+    if (debug && buffer.length > 0) {
+      console.log('New data received. Data is:', data);
     }
 
-    for(var i = 0; i < data.length; i++) {
-      if ((splitOnOnlyNewline && data[i] == 0x0A) ||
-        (!splitOnOnlyNewline && data[i] == 0x0D && data[i + 1] == 0x0A)) {
-        newlineIndexes.push(i);
-      }
-    }
-
-    if (newlineIndexes.length) {
+    if (data.length < PREAMBLE_SIZE) {
       if (debug) {
-        console.log('newlineIndexes', newlineIndexes)
+        console.log('Less than', PREAMBLE_SIZE, 'bytes in data, returning');
+      }
+      return;
+    }
+
+    if (targetLength === null && data.length >= PREAMBLE_SIZE) {
+      targetLength = data.readUInt8(LENGTH_BYTE_IDX) + PREAMBLE_SIZE;
+      bufferIsEmpty = false;
+      if (debug) {
+        console.log('Target length is', targetLength);
+      }
+    }
+
+    if (data.length >= targetLength) {
+      var slice = data.slice(0, targetLength);
+      data = data.slice(targetLength);
+      if (debug) {
+        console.log('Emitting:', slice);
+      }
+      emitter.emit('data', slice);
+      targetLength = null;
+
+      if (debug) {
+        console.log('Data emitted. New data is:', data);
       }
 
-      for (var i = 0; i < newlineIndexes.length; i++) {
-        var startSlice, endSlice;
-
-        if (i === 0) { // first slice
-          startSlice = 0;
-          endSlice = newlineIndexes[i];
-        } else {
-          startSlice = newlineIndexes[i] + 1;
-          endSlice = newlineIndexes[i + 1];
-        }
-
-        if (typeof endSlice === 'undefined') {
-          break;
-        }
-
-        var slice = data.slice(startSlice, endSlice);
-
+      // edge case, say data now has 4 bytes: 0x02, 0xFA, 0xFB, 0x03, 0x0A, 0x0B
+      // we need to make sure that the two-byte data is emitted too
+      if (data.length >= PREAMBLE_SIZE && data.readUInt8(LENGTH_BYTE_IDX) <= (data.length + PREAMBLE_SIZE)) {
         if (debug) {
-          console.log('Slicing from', startSlice, 'to', endSlice);
-          console.log('Slice:', slice);
+          console.log('Recursing');
         }
-
-        emitter.emit('data', slice);
-      }
-
-      data = data.slice(newlineIndexes[newlineIndexes.length - 1] + 2);
-
-      if (debug) {
-        console.log('data is now', data);
+        self(emitter, new Buffer(0));
       }
     }
   };

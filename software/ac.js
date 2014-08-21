@@ -16,7 +16,7 @@ function AC(serialPort) {
 
   this.serialPort = new SerialPort.SerialPort(this.serialPortPath, {
     baudrate: 9600,
-    parser: bufferParser(true, false)
+    parser: bufferParser()
   });
 
   this.serialPort.on('data', function (data) {
