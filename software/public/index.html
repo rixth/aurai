@@ -5,96 +5,53 @@
   <title>Aurai</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
   <link rel="stylesheet" href="/style.css">
-  <link href='http://fonts.googleapis.com/css?family=Syncopate:400,700' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Nunito:400,700' rel='stylesheet' type='text/css'>
   <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 </head>
-<body class="">
-  <div class="row">
-    <h1>aurai</h1>
-  </div>
+<body class="temperature-falling power-off">
   <div class="container">
-    <div class="row core-metrics">
-      <div class="third">
-        <div class="number humidity">
-          <span id="env-humidity">--</span>
-          <i class="fa fa-arrow-up"></i>
-          <i class="fa fa-arrow-down"></i>
-        </div>
-        <div class="desc">Humidity</div>
+    <h1>Aurai</h1>
+    <div class="current-temperature">
+      <div class="number">79</div>
+      <div class="number-meta">
+        <span class="temperature-unit">F</span>
+        <!-- <i class="fa fa-angle-double-down falling"></i> -->
+        <i class="fa fa-angle-double-up trend"></i>
       </div>
-      <div class="third">
-        <div class="number temperature">
-          <span id="env-temperature">--</span>
-          <i class="fa fa-arrow-up"></i>
-          <i class="fa fa-arrow-down"></i>
-        </div>
-        <div class="desc">Temperature</div>
-      </div>
-      <div class="third">
-        <div class="number" id="env-dewpoint">--</div>
+    </div>
+    <div class="environment">
+      <div class="dewpoint">
+        <span class="number">55</span><span class="temperature-unit">F</span>
         <div class="desc">Dewpoint</div>
       </div>
-    </div>
-    <div class="divider"></div>
-    <div class="row power empty on" data-cmd="power/toggle">
-        <div class="icon">
-          <i class="fa fa-power-off fa-3x"></i>
-        </div>
-        <div class="desc desc-on">
-          AC is currently on. Tap to turn off.
-        </div>
-        <div class="desc desc-off">
-          AC is currently off. Tap to turn on.
-        </div>
-      </button>
-    </div>
-    <div class="main-controls">
-      <div class="divider"></div>
-      <div class="row">
-        <div class="half mode" data-cmd="mode/next">
-          <div class="icon">
-            <i class="fa fa-wrench fa-3x"></i>
-          </div>
-          <div class="desc">
-            Mode: energy saver
-          </div>
-        </div>
-        <div class="half fan-speed" data-cmd="fan-speed/next">
-          <div class="icon">
-            <i class="fa fa-tachometer fa-3x"></i>
-          </div>
-          <div class="desc">
-            Fan speed: low
-          </div>
-        </div>
+      <div class="humidity">
+        <span class="number">37</span><span class="temperature-unit">%</span>
+        <div class="desc">Humidity</div>
       </div>
-      <div class="divider"></div>
-      <div class="row target-temp">
-        <div class="third target-temp-up" data-cmd="temp/down">
-          <div class="icon">
-            <i class="fa fa-toggle-down fa-3x"></i>
-          </div>
+    </div>
+    <div class="target-temperature">
+      <div class="target-down"><i class="fa fa-caret-down"></i></div>
+      <div class="target">
+        <span class="number">70</span><span class="temperature-unit">F</span>
+      </div>
+      <div class="target-up"><i class="fa fa-caret-up"></i></div>
+    </div>
+    <div class="bottom-actions">
+      <div class="inner">
+        <div class="mode">
+          <i class="fa fa-spinner"></i>
+          <span class="current">Cool</span>
         </div>
-        <div class="third">
-          <div class="number">
-            <span id="target-temp">26</span>&deg;F
-          </div>
-          <div class="desc">
-            Target temperature
-          </div>
+        <div class="power">
+          <i class="fa fa-power-off"></i>
         </div>
-        <div class="third target-temp-down" data-cmd="temp/up">
-          <div class="icon">
-            <i class="fa fa-toggle-up fa-3x"></i>
-          </div>
+        <div class="fan-speed">
+          <i class="fan-icon"></i>
+          <span class="current">High</span>
         </div>
       </div>
     </div>
-    <a href="#" class="reset">Reset</a>
   </div>
-
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-  <script src="/dew.js"></script>
-  <script src="/app.js"></script>
 </body>
 </html>

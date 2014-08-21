@@ -19,5 +19,8 @@
   "dependencies": {
     "express": "^4.8.4",
     "serialport": "^1.4.5"
+  },
+  "devDependencies": {
+    "stylus": "^0.48.0"
   }
 }

@@ -1,0 +1,253 @@
+light-gray = #C2C2C2
+dark-gray = #555555
+disabled-gray = #AAAAAA
+falling-blue = #B6D3F3
+falling-blue-dark = #4A90E2
+rising-red = #F1B3BB
+rising-red-dark = #D0021B
+power-green = #9AD657
+power-gray = #666666
+
+body
+  margin: 0
+  padding: 0
+
+  color: #555
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 400
+
+  background: light-gray
+
+  transition: background-color 0.5s linear
+
+  &.temperature-rising
+    background: rising-red
+
+  &.temperature-falling
+    background: falling-blue
+
+.container
+  position: relative
+
+  max-width: 290px
+  height: 500px
+  margin: 35px auto
+
+  background: white
+  border-radius: 16px
+
+.temperature-unit
+  padding-left: 2px
+
+  font-size: 12px
+  font-weight: bold
+  vertical-align: 8px
+
+.current-temperature
+  text-align: center
+
+  .number
+    display: inline
+
+    font-size: 120px
+
+  .number-meta
+    display: inline
+
+  .temperature-unit
+    font-size: 36px
+    vertical-align: 58px
+
+
+
+i.trend
+  display: none
+  margin-left: -26px
+
+  transition: color 0.5s linear, transform 0.5s linear;
+
+  font-size: 36px
+  vertical-align: 16px
+
+
+body.temperature-falling .trend
+  display: inline-block
+  color: falling-blue
+  transform: rotate(180deg)
+
+body.temperature-rising .trend
+  display: inline-block
+  color: rising-red
+
+.environment
+  width: 218px
+  margin: 30px auto 0 auto
+  overflow: hidden
+
+  color: light-gray
+  font-weight: bold
+
+  .number
+    font-size: 24px
+
+  .desc
+    margin-top: -3px
+
+    font-size: 12px
+
+  &>div
+    text-align: center
+
+.dewpoint
+  float: left
+
+  .number
+    padding-left: 7px
+
+.humidity
+  float: right
+
+  .temperature-unit
+    padding-left: 0
+
+.target-temperature
+  overflow: hidden
+  width: 218px
+  margin: 50px auto 0 auto
+
+  text-align: center
+
+.target
+  box-sizing: border-box
+  width: 100px
+  height: 44px
+  padding-top: 7.5px
+  margin: 0 15px
+
+  color: white
+  font-size: 24px
+
+  border-radius: 40px
+  background: dark-gray
+
+.target, .target-up, .target-down
+  float: left
+
+.target-up, .target-down
+  box-sizing: border-box
+  height: 44px
+  width: 44px
+
+  border-radius: 44px
+
+  i
+    font-size: 29px
+
+  &:hover
+    i
+      color: white
+
+.target-up
+  padding-top: 6px
+
+  background: rising-red
+
+  i
+    color: rising-red-dark
+
+.target-down
+  padding-top: 10px
+
+  background: falling-blue
+
+  i
+    color: falling-blue-dark
+
+.bottom-actions
+  position: absolute
+
+  bottom: 0
+  height: 73px
+  width: 100%
+
+  color: white
+  font-weight: bold
+  font-size: 12px
+  text-align: center
+
+  background: dark-gray
+  border-radius: 0px 0px 16px 16px
+
+  .inner
+    padding-top: 15px
+
+    &>div
+      box-sizing: border-box
+
+.mode, .fan-speed
+  width: 35%
+  padding-top: 12px
+
+.power
+  float: left
+
+
+  width: 30%
+  height: 80px
+  margin-top: -22px
+  padding-top: 23px
+
+  font-size: 32px
+  color: power-green
+
+  border-radius: 8px 8px 0 0
+  background: power-gray
+
+.mode
+  float: left
+
+.fan-speed
+  float: right
+
+.power, .bottom-actions,
+.target-up, .target-up:hover,
+.target-down, .target-down:hover,
+.target-up i, .target-up:hover i,
+.target-down i, .target-down:hover i
+  transition: color 0.5s linear, background 0.5s linear;
+
+.power-off
+  .power, .bottom-actions
+    color: disabled-gray
+
+  .fan-icon
+    background-image: url(/fan-off.png)
+
+  .target-up, .target-up:hover,
+  .target-down, .target-down:hover
+    background: disabled-gray
+
+    i
+      color: white
+
+.fan-icon
+  display: inline-block
+  width: 13px
+  height: 13px
+
+  vertical-align: -2px
+
+  background-image: url(/fan.png)
+  background-size: 13px 13px
+  background-repeat: no-repeat
+
+h1
+  margin: 0
+  padding-top: 38px
+
+  color: light-gray
+  font-family: Nunito, sans-serif
+  font-size: 32px
+  font-weight: 400
+  text-align: center
+  text-transform: uppercase
