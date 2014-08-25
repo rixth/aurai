@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="6.5.0">
+<eagle version="6.6.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -3662,12 +3662,12 @@ This is the mechanical footprint for a #4 phillips button head screw. Use the ke
 <connects>
 <connect gate="G$1" pin="!CS" pad="4"/>
 <connect gate="G$1" pin="!RESET" pad="3"/>
-<connect gate="G$1" pin="!WP" pad="8"/>
-<connect gate="G$1" pin="GND" pad="6"/>
-<connect gate="G$1" pin="MISO" pad="5"/>
+<connect gate="G$1" pin="!WP" pad="5"/>
+<connect gate="G$1" pin="GND" pad="7"/>
+<connect gate="G$1" pin="MISO" pad="8"/>
 <connect gate="G$1" pin="MOSI" pad="1"/>
 <connect gate="G$1" pin="SCK" pad="2"/>
-<connect gate="G$1" pin="VCC" pad="7"/>
+<connect gate="G$1" pin="VCC" pad="6"/>
 </connects>
 <technologies>
 <technology name="">
@@ -5545,9 +5545,12 @@ http://www.fairchildsemi.com/ds/LM/LM7805.pdf</description>
 </sheet>
 </sheets>
 <errors>
-<approved hash="104,1,233.68,60.96,U3,VCC,3.3V,,,"/>
-<approved hash="104,1,91.44,149.86,U$1,VCC,5V,,,"/>
-<approved hash="104,1,38.1,73.66,IC2,GND1,GND,,,"/>
+<approved hash="104,1,203.2,50.8,U3,VCC,3.3V,,,"/>
+<approved hash="104,1,208.28,132.08,U$1,VCC,3.3V,,,"/>
+<approved hash="104,1,208.28,96.52,U2,VCC,3.3V,,,"/>
+<approved hash="206,1,182.88,48.26,MISO,,,,,"/>
+<approved hash="206,1,182.88,99.06,MISO,,,,,"/>
+<approved hash="206,1,182.88,127,MISO,,,,,"/>
 </errors>
 </schematic>
 </drawing>
