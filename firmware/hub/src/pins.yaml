@@ -1,7 +1,7 @@
 ---
-flash_cs: 4
-red_led: 24
-ylw_led: 25
+# flash_cs: 4
+red_led: 26
+ylw_led: 27
 grn_led: 28
-nrf24_ce: 26
-nrf24_csn: 27
+nrf24_ce: 15
+nrf24_csn: 16
