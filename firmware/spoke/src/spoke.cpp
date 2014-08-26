@@ -22,6 +22,10 @@ int main() {
   NRF24_init();
 
   while (1) {
+    DiagLEDS_set(LED_ALL);
+    _delay_ms(100);
+    DiagLEDS_set(0);
+
     Serial.println("Aurai SPOKE.");
     Serial.println(" [B] Boot");
     Serial.println(" [?] Enter test mode");
