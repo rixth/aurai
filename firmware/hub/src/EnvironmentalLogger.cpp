@@ -9,16 +9,22 @@
 #include "SpokeCommands.h"
 #include "NRF24L01.h"
 #include "EEPROM.h"
-#include "Flash.h"
+// #include "Flash.h"
 
 // These are just shims
 void DataFlash_read(uint16_t pageAddr, uint16_t byteAddr, uint8_t *buf, uint8_t len) {
-  Flash_read(byteAddr, buf, len);
+  uint8_t i;
+  for (i = 0; i < len; i++) {
+    buf[i] = EEPROM.read(byteAddr + i);
+  }
 }
 
 // These are just shims
 void DataFlash_write(uint16_t pageAddr, uint16_t byteAddr, uint8_t *val, uint8_t len, uint8_t erase) {
-  Flash_write(byteAddr, val, len);
+  uint8_t i;
+  for (i = 0; i < len; i++) {
+    EEPROM.write(byteAddr + i, val[i]);
+  }
 }
 
 uint16_t EL_headByteAddr = EL_MIN_DATA_BYTE_ADDR;
